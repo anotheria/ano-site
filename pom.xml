@@ -23,7 +23,7 @@
 		<configureme.version>2.3.0</configureme.version>
 		<moskito.version>2.10.1-SNAPSHOT</moskito.version>
 
-		<commons-io.version>1.4</commons-io.version>
+		<commons-io.version>2.7</commons-io.version>
 		<json.version>20090211</json.version>
 	</properties>
 
