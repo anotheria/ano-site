@@ -67,7 +67,7 @@ import java.util.Set;
 
 /**
  * {@link AnoSiteAccessAPI} implementation.
- * 
+ *
  * @author Alexandr Bolbat
  */
 public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
@@ -240,7 +240,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Main API logic.
-	 * 
+	 *
 	 * @param accessOperationId
 	 *            - access operation id
 	 * @return <code>true</code> if operation allowed or <code>false</code>
@@ -328,7 +328,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Check is some user logged in.
-	 * 
+	 *
 	 * @return <code>true</code> if logged or <code>false</code>
 	 */
 	private boolean isLoggedIn() {
@@ -337,7 +337,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Return currently logged user id.
-	 * 
+	 *
 	 * @return {@link String} id of currently logged user
 	 * @throws AnoSiteAccessAPIException
 	 */
@@ -351,7 +351,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Return {@link AccessOperation} by given id.
-	 * 
+	 *
 	 * @param id
 	 *            - given access operation id
 	 * @return {@link AccessOperation}, can't be <code>null</code>
@@ -369,7 +369,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Get {@link List} of {@link Role} by given id's.
-	 * 
+	 *
 	 * @return {@link List} of {@link Role}, can be empty but not <code>null</code>
 	 * @throws AnoSiteAccessAPIException
 	 */
@@ -392,7 +392,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Get {@link List} of {@link Permission} who have given access operation.
-	 * 
+	 *
 	 * @param accessOperationId
 	 *            - access operation id
 	 * @return {@link List} of {@link Permission}, can be empty but not <code>null</code>
@@ -417,7 +417,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Get {@link List} of {@link Permission} by given id's.
-	 * 
+	 *
 	 * @param ids
 	 *            - id's
 	 * @return {@link List} of {@link Permission}, can be empty but not <code>null</code>
@@ -443,7 +443,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Get {@link List} of {@link Constraint} by given id's.
-	 * 
+	 *
 	 * @param ids
 	 *            - id's
 	 * @return {@link List} of {@link Constraint}, can be empty but not <code>null</code>
@@ -469,7 +469,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Get {@link List} of {@link ContextInitializer} by given id's.
-	 * 
+	 *
 	 * @param ids
 	 *            - id's
 	 * @return {@link List} of {@link ContextInitializer}, can be empty but not <code>null</code>
@@ -495,7 +495,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Configuring {@link AccessService} instance with current configuration.
-	 * 
+	 *
 	 * @throws AnoSiteAccessAPIException
 	 */
 	private synchronized void configureAccessService() throws AnoSiteAccessAPIException {
@@ -571,9 +571,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 	 * */
 	private void createSecureBoxes() {
 
-		List<UserData> userDatas = null;
-		SecurityBox securityBox = null;
-		UserDef user = null;
+		List<UserData> userDatas;
 
 		try {
 			userDatas = accessApplicationDataService.getUserDatas();
@@ -583,7 +581,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 		}
 
 		for (UserData userData : userDatas) {
-
+            UserDef user;
 			try {
 				user = userDataService.getUserDef(userData.getUserId());
 			} catch (NoSuchDocumentException e1) {
@@ -593,25 +591,25 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 				LOGGER.error("Error occurred while getting UserDef by id", e);
 				throw new RuntimeException("Error occurred while getting UserDef by id");
 			}
-
+            SecurityBox securityBox = null;
 			try {
 				SaveableID saveableID = new SaveableID();
 				saveableID.setSaveableId(user.getLogin());
 				saveableID.setOwnerId(user.getLogin());
 				securityBox = securityBoxPersistenceService.read(saveableID);
-			} catch (CrudServiceException e) {
-				LOGGER.warn("SecurityBox with id=" + user.getLogin() + " not found. Creating new one");
-			}
+            } catch (CrudServiceException e) {
+                LOGGER.warn("SecurityBox with id=" + user.getLogin() + " not found. Creating new one");
+            }
 
-			if (securityBox == null) {
-				securityBox = new SecurityBox(user.getLogin());
-			}
+            if (securityBox == null) {
+                securityBox = new SecurityBox(user.getLogin());
+            }
 
-			for (String roleId : userData.getRoles()) {
+            for (String roleId : userData.getRoles()) {
 
-				if (securityBox.hasRole(roleId)) {
-					continue;
-				}
+                if (securityBox.hasRole(roleId)) {
+                    continue;
+                }
 
 				net.anotheria.access.Role role = accessService.getRole(roleId);
 
@@ -627,7 +625,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Listener for updating {@link AccessService} configuration if it's changed in CMS.
-	 * 
+	 *
 	 * @author Alexandr Bolbat
 	 */
 	public final class AccessConfigurationChangeListener implements IServiceListener {
@@ -679,7 +677,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 
 	/**
 	 * Listener for clearing {@link AccessService} cache if user data (roles2user mapping) changed trough CMS.
-	 * 
+	 *
 	 * @author Alexandr Bolbat
 	 */
 	public final class AccessUserDataChangeListener implements IServiceListener {

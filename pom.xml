@@ -2,7 +2,7 @@
 	<parent>
 		<groupId>net.anotheria</groupId>
 		<artifactId>ano-doc-parent</artifactId>
-		<version>3.2.0</version>
+		<version>3.2.1-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -11,14 +11,14 @@
 	<name>anotheria.net site engine</name>
 
 	<properties>
-		<ano-doc.version>3.2.0</ano-doc.version>
+		<ano-doc.version>3.2.1-SNAPSHOT</ano-doc.version>
 		<ano-util.version>2.2.0</ano-util.version>
 		<ano-tags.version>2.1.1</ano-tags.version>
-		<ano-web.version>3.0.0</ano-web.version>
+		<ano-web.version>3.0.1-SNAPSHOT</ano-web.version>
 		<ano-maf.version>3.0.0</ano-maf.version>
 		<ano-prise.version>2.2.0</ano-prise.version>
 		<ano-plass.version>2.1.2</ano-plass.version>
-		<ano-access.version>2.2.0</ano-access.version>
+		<ano-access.version>2.2.3-SNAPSHOT</ano-access.version>
 		<jersey-version>2.38</jersey-version>
 
 		<configureme.version>2.5.0</configureme.version>
