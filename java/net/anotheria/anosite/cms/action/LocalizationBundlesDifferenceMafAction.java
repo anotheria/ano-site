@@ -10,7 +10,9 @@ import net.anotheria.anosite.gen.asresourcedata.service.IASResourceDataService;
 import net.anotheria.anosite.gen.shared.action.BaseToolsAction;
 import net.anotheria.maf.action.ActionCommand;
 import net.anotheria.maf.action.ActionMapping;
+import net.anotheria.util.NumberUtils;
 
+import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.List;
 
@@ -29,7 +31,11 @@ public class LocalizationBundlesDifferenceMafAction extends BaseToolsAction {
     @Override
     public ActionCommand anoDocExecute(ActionMapping mapping, HttpServletRequest req, HttpServletResponse res) throws Exception {
         List<LocalizationBundle> localizationBundles = iasResourceDataService.getLocalizationBundles();
-        localizationBundles.sort(Comparator.comparing(LocalizationBundle::getId));
+        localizationBundles.sort(((o1, o2) -> {
+            String firstId = NumberUtils.itoa(Integer.parseInt(o1.getId()), 3);
+            String secondId = NumberUtils.itoa(Integer.parseInt(o2.getId()), 3);
+            return firstId.compareToIgnoreCase(secondId);
+        }));
         req.setAttribute("localizationBundles", localizationBundles);
 
         List<String> supportedLanguages = getSupportedLanguages();
@@ -38,10 +44,10 @@ public class LocalizationBundlesDifferenceMafAction extends BaseToolsAction {
         String defaultLanguage = ContextManager.getCallContext().getDefaultLanguage();
         req.setAttribute("sourceLanguage", defaultLanguage);
 
-        if(supportedLanguages.size() == 2) {
+        if (supportedLanguages.size() == 2) {
             String destinationLanguage;
             for (String supportedLanguage : supportedLanguages) {
-                if(!supportedLanguage.equals(defaultLanguage)) {
+                if (!supportedLanguage.equals(defaultLanguage)) {
                     destinationLanguage = supportedLanguage;
                     req.setAttribute("destinationLanguage", destinationLanguage);
                 }
