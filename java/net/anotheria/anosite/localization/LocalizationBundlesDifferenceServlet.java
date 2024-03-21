@@ -19,9 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @WebServlet({"/LocalizationBundlesDifference"})
@@ -64,18 +62,16 @@ public class LocalizationBundlesDifferenceServlet extends HttpServlet {
             if (method.equals(TRANSLATE_METHOD)) {
 
                 // find a difference and put it into the map
-                Map<String, String> differenceMap = new HashMap<>();
-                for (Map.Entry<String, String> entry : sourceMap.entrySet()) {
-                    if (!destinationMap.containsKey(entry.getKey())) {
-                        differenceMap.put(entry.getKey(), entry.getValue());
+                Map<String, String> differenceMap = new LinkedHashMap<>();
+                sourceMap.forEach((key, value) -> {
+                    if (!destinationMap.containsKey(key)) {
+                        differenceMap.put(key, value);
                     }
-                }
+                });
 
                 // convert map back to string
                 StringBuilder result = new StringBuilder();
-                for (Map.Entry<String, String> entry : differenceMap.entrySet()) {
-                    result.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
-                }
+                differenceMap.forEach((key, value) -> result.append(key).append("=").append(value).append("\n"));
 
                 JSONObject data = new JSONObject();
                 data.put("success", true);
@@ -83,16 +79,12 @@ public class LocalizationBundlesDifferenceServlet extends HttpServlet {
                 jsonResponse.setData(data);
             } else if (method.equals(SAVE_METHOD)) {
                 String messagesToSave = req.getParameter("messagesToSave");
-                Map<String, String> map = StringUtils.buildParameterMap(messagesToSave);
-                for (Map.Entry<String, String> entry : map.entrySet()) {
-                    destinationMap.putIfAbsent(entry.getKey(), entry.getValue());
-                }
+                Map<String, String> map = buildParameterMap(messagesToSave);
+                map.forEach(destinationMap::putIfAbsent);
 
                 // convert destination map back to string to save it
                 StringBuilder result = new StringBuilder();
-                for (Map.Entry<String, String> entry : destinationMap.entrySet()) {
-                    result.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
-                }
+                destinationMap.forEach((key, value) -> result.append(key).append("=").append(value).append("\n"));
 
                 // localization bundle has usually different messages for different locales.
                 // here we want to define into which field messages should be saved depending on destination locale
@@ -124,7 +116,7 @@ public class LocalizationBundlesDifferenceServlet extends HttpServlet {
             return new HashMap<>();
         }
 
-        return StringUtils.buildParameterMap(sourceContent);
+        return buildParameterMap(sourceContent);
     }
 
 
@@ -138,6 +130,50 @@ public class LocalizationBundlesDifferenceServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+    }
+
+    private Map<String, String> buildParameterMap(String source) {
+        char lineDelimiter = '\n';
+        char parameterDelimiter = '=';
+        source = StringUtils.removeChar(source, '\r');
+
+        String[] lines = StringUtils.tokenize(source, lineDelimiter);
+        Map<String, String> ret = new LinkedHashMap<>(lines.length);
+        for (String line : lines) {
+            StringPair sp = splitString(line, parameterDelimiter);
+            if (sp.first != null && sp.second != null) {
+                ret.put(sp.first.trim(), sp.second.trim());
+            }
+        }
+
+        return ret;
+    }
+
+    private StringPair splitString(String source, char delimiter) {
+        int pDelPos = source.indexOf(delimiter);
+        return pDelPos == -1 ? new StringPair() : new StringPair(source.substring(0, pDelPos), source.substring(pDelPos + 1, source.length()));
+    }
+
+    private static class StringPair {
+        private final String first;
+        private final String second;
+
+        StringPair(String first, String second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        StringPair() {
+            this(null, null);
+        }
+
+        public String getFirst() {
+            return this.first;
+        }
+
+        public String getSecond() {
+            return this.second;
+        }
     }
 
 }
