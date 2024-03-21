@@ -1938,7 +1938,7 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 			bean.setName(item.getName());
 
 			boolean needUseRDServlet = false;
-			if (!StringUtils.isEmpty(item.getLink()))
+			if (!StringUtils.isEmpty(item.getLink()) && !item.getLink().startsWith("http"))
 				needUseRDServlet = true;
 			
 			bean.setLink(needUseRDServlet ? linkPrefix + item.getLink() : item.getLink());
