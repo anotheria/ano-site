@@ -11,7 +11,7 @@
 	<name>anotheria.net site engine</name>
 
 	<properties>
-		<ano-doc.version>4.0.0</ano-doc.version>
+		<ano-doc.version>4.1.0</ano-doc.version>
 		<ano-util.version>4.0.0</ano-util.version>
 		<ano-tags.version>4.0.0</ano-tags.version>
 		<ano-web.version>4.0.0</ano-web.version>
@@ -22,7 +22,7 @@
 		<jersey-version>3.1.3</jersey-version>
 
 		<configureme.version>4.0.0</configureme.version>
-		<moskito.version>4.0.0</moskito.version>
+		<moskito.version>4.0.1</moskito.version>
 
 		<commons-io.version>2.15.0</commons-io.version>
 		<json.version>20231013</json.version>
