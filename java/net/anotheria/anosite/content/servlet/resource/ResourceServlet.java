@@ -11,9 +11,9 @@ import net.anotheria.webutils.filehandling.actions.FileStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 
@@ -118,7 +118,7 @@ public abstract class ResourceServlet extends MoskitoHttpServlet {
 	 * @param type		  {@link ResourceReadType}
 	 * @param propertyValue value of property
 	 * @return file name
-	 * @throws javax.servlet.ServletException on errors from ResourceService
+	 * @throws jakarta.servlet.ServletException on errors from ResourceService
 	 */
 
 	protected abstract String getFileName(ResourceReadType type, String propertyValue) throws ServletException;

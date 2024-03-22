@@ -4,7 +4,7 @@ package net.anotheria.anosite.content.variables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Variable processor for dates.

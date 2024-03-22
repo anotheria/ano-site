@@ -4,7 +4,7 @@ import net.anotheria.util.content.template.processors.variables.ConditionProcess
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class ConditionProcessor implements VariablesProcessor {
 	private final Logger log = LoggerFactory.getLogger(ConditionProcessor.class);

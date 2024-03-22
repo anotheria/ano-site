@@ -4,8 +4,8 @@ import net.anotheria.anosite.content.bean.BoxBean;
 import net.anotheria.anosite.gen.aswebdata.data.Box;
 import net.anotheria.anosite.handler.exception.BoxHandleException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * A boxhandler can be attached to any box. Upon processing of a request for each box, its box handler (if set) will be instantiated and the methods 

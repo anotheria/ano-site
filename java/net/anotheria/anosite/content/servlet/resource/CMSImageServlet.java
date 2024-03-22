@@ -5,7 +5,7 @@ import net.anotheria.anosite.content.servlet.resource.type.ResourceReadType;
 import net.anotheria.anosite.gen.asresourcedata.data.Image;
 import net.anotheria.anosite.gen.asresourcedata.service.ASResourceDataServiceException;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.util.List;
 
 /**

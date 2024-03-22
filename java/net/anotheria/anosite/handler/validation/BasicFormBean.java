@@ -1,6 +1,6 @@
 package net.anotheria.anosite.handler.validation;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Basic form bean. Use it as example for real form beans.

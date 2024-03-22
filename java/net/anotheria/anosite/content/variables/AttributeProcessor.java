@@ -1,6 +1,6 @@
 package net.anotheria.anosite.content.variables;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import net.anotheria.anodoc.util.context.BrandConfig;
 import net.anotheria.anodoc.util.context.CallContext;

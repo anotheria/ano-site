@@ -3,7 +3,7 @@ package net.anotheria.anosite.guard;
 import net.anotheria.asg.data.DataObject;
 import net.anotheria.asg.exception.ASGRuntimeException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A conditional guard guards any object and returns true only if the predefined condition is true in the objects context. ContentPageServlet and other CMS classes ignore 

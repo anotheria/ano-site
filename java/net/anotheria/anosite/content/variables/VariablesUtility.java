@@ -5,7 +5,7 @@ import net.anotheria.util.content.element.ContentElement;
 import net.anotheria.util.content.element.DynamicElement;
 import net.anotheria.util.content.element.StaticElement;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

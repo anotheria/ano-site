@@ -1,6 +1,6 @@
 package net.anotheria.anosite.tags.util;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 import net.anotheria.tags.BaseTagSupport;
 import net.anotheria.anosite.util.AnositeConstants;

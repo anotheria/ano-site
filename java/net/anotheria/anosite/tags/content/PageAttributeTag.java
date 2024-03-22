@@ -1,6 +1,6 @@
 package net.anotheria.anosite.tags.content;
 
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.PageContext;
 
 import net.anotheria.anosite.content.bean.AttributeMap;
 import net.anotheria.anosite.content.bean.PageBean;

@@ -6,7 +6,7 @@ import net.anotheria.tags.BaseTagSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 /**
  * Writes the value for the attribute "name" of the current CMS Object(box/page/etc). If no value is specified, writes out the defaultValue.

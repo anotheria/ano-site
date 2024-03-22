@@ -1,17 +1,20 @@
 package net.anotheria.anosite.content.filter;
 
+import static net.anotheria.anosite.util.AnositeConstants.PARAM_LANGUAGE;
+import static net.anotheria.anosite.util.AnositeConstants.SA_LANGUAGE;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import net.anotheria.anodoc.util.context.BrandConfig;
 import net.anotheria.anodoc.util.context.ContextManager;
@@ -39,7 +42,7 @@ public class LanguageFilter implements Filter{
 	 * {@link IASBrandService} instance.
 	 */
 	private IASBrandService brandService;
-	
+
 	@Override public void destroy() {
 	}
 
@@ -121,7 +124,7 @@ public class LanguageFilter implements Filter{
 
 		req.getSession().setAttribute(SA_BRAND, brandConfig.getName());
 	}
-	
+
 	@Override public void init(FilterConfig arg0) throws ServletException {
 		AnoDocConfigurator.configure();
 		try {

@@ -3,7 +3,7 @@ package net.anotheria.anosite.content.variables;
 import net.anotheria.util.StringUtils;
 import net.anotheria.util.content.template.processors.variables.ConstantVariables;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Variables processor for constants. Useful for html tags with colide with variables processor syntax for example &amp;nbsp; etc.
