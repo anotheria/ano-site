@@ -1,7 +1,7 @@
 package net.anotheria.anosite.action;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * An action is something which can be performed by the user. A typical action is sendMessage or deleteMessage in a messaging system, both actions which do not 

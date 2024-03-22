@@ -1,6 +1,6 @@
 package net.anotheria.anosite.handler.validation;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Clean form bean. Used in handlers where we don't need form bean and submit.

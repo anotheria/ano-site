@@ -2,7 +2,7 @@ package net.anotheria.anosite.shared.presentation.servlet;
 
 import net.anotheria.moskito.web.MoskitoHttpServlet;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Base servlet class for anosite servlets.

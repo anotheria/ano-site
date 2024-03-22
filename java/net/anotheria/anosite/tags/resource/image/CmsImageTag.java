@@ -7,7 +7,7 @@ import net.anotheria.anosite.shared.ResourceServletMappingConfig;
 import net.anotheria.anosite.tags.resource.AbstractResourceTag;
 import net.anotheria.asg.data.DataObject;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 import java.util.List;
 
 /**

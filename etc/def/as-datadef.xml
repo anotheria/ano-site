@@ -11,5 +11,6 @@
     <!--@include:as-datadef-ano-access-configuration.xml -->
     <!--@include:as-datadef-ano-access-application-data.xml -->
     <!--@include:as-datadef-feature.xml -->
+    <!--@include:as-datadef-brands.xml -->
 
 

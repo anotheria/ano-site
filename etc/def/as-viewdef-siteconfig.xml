@@ -28,6 +28,7 @@
 							<element type="function" name="updateAndClose"/>
 							<element type="function" name="updateAndStay"/>
 							<element type="function" name="cancel"/>
+							<element type="function" name="transfer" />
 						</element>
         			</elements>
       			</dialog>

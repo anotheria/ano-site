@@ -6,8 +6,8 @@ import net.anotheria.anosite.wizard.handler.exceptions.WizardHandlerProcessExcep
 import net.anotheria.anosite.wizard.handler.exceptions.WizardHandlerSubmitException;
 import net.anotheria.anosite.wizard.handler.response.WizardHandlerResponse;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Base, wizard (multi page dialog) Handler interface.
@@ -19,8 +19,8 @@ public interface WizardHandler {
 	/**
 	 * Method called before wizard process execution.
 	 *
-	 * @param req	{@link javax.servlet.http.HttpServletRequest}}
-	 * @param res	{@link javax.servlet.http.HttpServletResponse}
+	 * @param req	{@link jakarta.servlet.http.HttpServletRequest}}
+	 * @param res	{@link jakarta.servlet.http.HttpServletResponse}
 	 * @param wizard {@link net.anotheria.anosite.gen.aswizarddata.data.WizardDef}
 	 * @return {@link WizardHandlerResponse}
 	 * @throws WizardHandlerPreProcessException
@@ -31,8 +31,8 @@ public interface WizardHandler {
 	/**
 	 * Process request to wizard.
 	 *
-	 * @param req	{@link javax.servlet.http.HttpServletRequest}}
-	 * @param res	{@link javax.servlet.http.HttpServletResponse}
+	 * @param req	{@link jakarta.servlet.http.HttpServletRequest}}
+	 * @param res	{@link jakarta.servlet.http.HttpServletResponse}
 	 * @param wizard {@link net.anotheria.anosite.gen.aswizarddata.data.WizardDef}
 	 * @return {@link WizardHandlerResponse}
 	 * @throws net.anotheria.anosite.wizard.handler.exceptions.WizardHandlerProcessException
@@ -43,8 +43,8 @@ public interface WizardHandler {
 	/**
 	 * ProcessSubmit request to wizard.
 	 *
-	 * @param req	{@link javax.servlet.http.HttpServletRequest}}
-	 * @param res	{@link javax.servlet.http.HttpServletResponse}
+	 * @param req	{@link jakarta.servlet.http.HttpServletRequest}}
+	 * @param res	{@link jakarta.servlet.http.HttpServletResponse}
 	 * @param wizard {@link net.anotheria.anosite.gen.aswizarddata.data.WizardDef}
 	 * @return {@link WizardHandlerResponse}
 	 * @throws net.anotheria.anosite.wizard.handler.exceptions.WizardHandlerSubmitException

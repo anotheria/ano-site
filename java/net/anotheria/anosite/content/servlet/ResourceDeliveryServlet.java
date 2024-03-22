@@ -7,9 +7,9 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -118,9 +118,9 @@ public class ResourceDeliveryServlet extends MoskitoHttpServlet {
 	/**
 	 * Stream resource if exist.
 	 * 
-	 * @param path
+	 * @param resourceFile
 	 *            - resource file path
-	 * @param resp
+	 * @param res
 	 *            - response
 	 * @return <code>true</code> if resource steamed or <code>false</code>
 	 */

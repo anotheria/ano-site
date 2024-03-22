@@ -5,8 +5,8 @@ import net.anotheria.anosite.wizard.handler.exceptions.WizardHandlerProcessExcep
 import net.anotheria.anosite.wizard.handler.exceptions.WizardHandlerSubmitException;
 import net.anotheria.anosite.wizard.handler.response.WizardHandlerResponse;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Wrapper for Wizard handler.

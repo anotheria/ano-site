@@ -52,6 +52,10 @@ public final class AnositeConstants {
 	 * Request attribute current uri.
 	 */
 	public static final String RA_CURRENT_URI = BEAN_PREFIX + RA_PREFIX + ".currentUri";
+	/**
+	 * Session attribute brand.
+	 */
+	public static final String SA_BRAND = BEAN_PREFIX + SA_PREFIX + ".brand";
 
 	/**
 	 * Language parameter.

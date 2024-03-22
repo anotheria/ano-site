@@ -28,6 +28,21 @@
 			</content>
 		</property>
 	</document>
+	  <document name="PdfTemplate">
+		  <property name="name" type="string" multilingual="false"/>
+		  <property name="showPageNumbers" type="boolean"/>
+		  <property name="applyBackgroundStyles" type="boolean"/>
+		  <property name="headerTemplate" type="text" multilingual="true"/>
+		  <property name="headerMargin" type="int"/>
+		  <property name="footerTemplate" type="text" multilingual="true"/>
+		  <property name="footerMargin" type="int"/>
+		  <property name="contentTemplate" type="text" multilingual="true"/>
+		  <property name="localizations" type="list">
+		  <content>
+			  <link name="guard" type="single" target="ASResourceData.LocalizationBundle"/>
+		  </content>
+		  </property>
+	  </document>
 	<document name="PushNotificationTemplate">
 		<property type="string" name="name"/>
 		<property type="text" name="message" multilingual="true"/>

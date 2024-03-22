@@ -1,0 +1,81 @@
+{
+  "openAIToken": "$<ano-site-localization-auto-translation-token-config.token>",
+  "@languages": [
+    {
+      "key": "EN",
+      "value": "english"
+    },
+    {
+      "key": "DE",
+      "value": "german"
+    },
+    {
+      "key": "RU",
+      "value": "russian"
+    },
+    {
+      "key": "UA",
+      "value": "ukrainian"
+    },
+    {
+      "key": "PL",
+      "value": "polish"
+    },
+    {
+      "key": "DK",
+      "value": "denmarkian"
+    },
+    {
+      "key": "FR",
+      "value": "french"
+    },
+    {
+      "key": "AT",
+      "value": "austrian"
+    },
+    {
+      "key": "CH",
+      "value": "swiss german"
+    },
+    {
+      "key": "NO",
+      "value": "norwegian"
+    },
+    {
+      "key": "SE",
+      "value": "swedish"
+    },
+    {
+      "key": "SK",
+      "value": "slovenian"
+    },
+    {
+      "key": "CZ",
+      "value": "сzech"
+    },
+    {
+      "key": "CH_FR",
+      "value": "swiss french"
+    },
+    {
+      "key": "IT",
+      "value": "italian"
+    },
+    {
+      "key": "CH_IT",
+      "value": "swiss italian"
+    },
+    {
+      "key": "ES",
+      "value": ""
+    },
+    {
+      "key": "CA_EN",
+      "value": "сanadian english"
+    },
+    {
+      "key": "CA_FR",
+      "value": "Canadian French"
+    }
+  ]
+}

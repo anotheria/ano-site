@@ -4,7 +4,6 @@ import net.anotheria.anosite.bredcrambs.data.DocumentEnum;
 import net.anotheria.asg.exception.ConstantNotFoundException;
 import net.anotheria.maf.action.ActionCommand;
 import net.anotheria.maf.action.ActionMapping;
-import net.anotheria.maf.bean.FormBean;
 import net.anotheria.maf.json.JSONResponse;
 import net.anotheria.util.StringUtils;
 import net.anotheria.webutils.actions.BaseAction;
@@ -13,8 +12,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -91,7 +90,7 @@ public class ShowUsagesOfDocumentAction extends BaseAction {
      * Writes specified text to response and flushes the stream.
      *
      * @param res
-     *            {@link javax.servlet.http.HttpServletRequest}
+     *            {@link jakarta.servlet.http.HttpServletRequest}
      * @param jsonResponse
      *            {@link net.anotheria.maf.json.JSONResponse}
      * @throws java.io.IOException

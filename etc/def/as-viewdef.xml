@@ -11,6 +11,7 @@
     <!--@include:as-viewdef-ano-access-configuration.xml -->
     <!--@include:as-viewdef-ano-access-application-data.xml -->
     <!--@include:as-viewdef-feature.xml -->
+    <!--@include:as-viewdef-brands.xml -->
 
 	<!--  AnoSite supports following embedded user roles
 		developer: a developer who works on the code, has access to almost anything.

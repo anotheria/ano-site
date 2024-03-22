@@ -1,6 +1,6 @@
 package net.anotheria.anosite.content.variables;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class ParameterProcessor implements VariablesProcessor {
 

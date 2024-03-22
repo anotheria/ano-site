@@ -1,8 +1,8 @@
 package net.anotheria.anosite.tags.content;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.jsp.JspException;
 
 import net.anotheria.anoplass.api.APICallContext;
 import net.anotheria.anosite.content.bean.BoxBean;

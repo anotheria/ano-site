@@ -6,5 +6,6 @@ public enum LocalizationEnvironment {
 	PAGE,
 	TEMPLATE,
 	SITE,
-	RESOURCES;
+	RESOURCES,
+	BRAND;
 }
