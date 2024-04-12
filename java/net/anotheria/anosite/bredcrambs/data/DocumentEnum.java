@@ -2,6 +2,9 @@ package net.anotheria.anosite.bredcrambs.data;
 
 import net.anotheria.anoprise.metafactory.MetaFactory;
 import net.anotheria.anoprise.metafactory.MetaFactoryException;
+import net.anotheria.anosite.gen.asbrand.data.Brand;
+import net.anotheria.anosite.gen.asbrand.service.ASBrandServiceException;
+import net.anotheria.anosite.gen.asbrand.service.IASBrandService;
 import net.anotheria.anosite.gen.aslayoutdata.data.PageLayout;
 import net.anotheria.anosite.gen.aslayoutdata.service.ASLayoutDataServiceException;
 import net.anotheria.anosite.gen.aslayoutdata.service.IASLayoutDataService;
@@ -168,12 +171,14 @@ public enum DocumentEnum {
     private static IASWebDataService webDataService;
     private static IASSiteDataService siteDataService;
     private static IASLayoutDataService layoutDataService;
+    private static IASBrandService brandService;
 
     static {
         try {
             webDataService = MetaFactory.get(IASWebDataService.class);
             siteDataService = MetaFactory.get(IASSiteDataService.class);
             layoutDataService = MetaFactory.get(IASLayoutDataService.class);
+            brandService = MetaFactory.get(IASBrandService.class);
         } catch (MetaFactoryException e) {
             LOGGER.error(MarkerFactory.getMarker("FATAL"), "Services init failure", e);
         }
@@ -353,6 +358,29 @@ public enum DocumentEnum {
                     }
                 }
             }
+
+            for (Brand brand: brandService.getBrands()) {
+                StringBuffer pathBefore = new StringBuffer("</br> <a href=\"asbrandBrandEdit?pId=" + brand.getId() + "\" > Brand [" + brand.getName() + "]  </a> ->" +
+                        " <a href=\"asbrandBrandAttributesShow?ownerId=" + brand.getId() + "\" > Attributes </a>");
+
+                for (String attributeId : brand.getAttributes()) {
+                    Attribute attribute = mapOfAllAttributes.get(attributeId);
+                    if (attribute == null)
+                        continue;
+
+                    if (attributeId.equalsIgnoreCase(pId)) {
+                        result.add(pathBefore + "</br>");
+                    }
+                    List<String> subattrubutes = attribute.getSubattributes();
+                    if (!subattrubutes.isEmpty()) {
+                        StringBuffer pathWithCurrentAttr = new StringBuffer(" ->   <a href=\"aswebdataAttributeEdit?pId=" + attribute.getId() + "\" > Attribute [" + attribute.getName() + "]  </a> ->" +
+                                "<a href=\"aswebdataAttributeSubattributesShow?ownerId=" + attribute.getId() + "\" > Subattributes </a>");
+                        findAttributeInSubattributesRecursively(subattrubutes, pId, pathBefore.append(pathWithCurrentAttr), result, mapOfAllAttributes);
+                    }
+                }
+            }
+
+
             for (Map.Entry<String, Attribute> entry : mapOfAllAttributes.entrySet()) {
                 if (entry.getKey().equalsIgnoreCase(pId))
                     continue;
@@ -374,8 +402,8 @@ public enum DocumentEnum {
                     }
                 }
             }
-        } catch (ASWebDataServiceException e) {
-            LOGGER.error("IASWebDataService failed.", e);
+        } catch (ASWebDataServiceException | ASBrandServiceException e) {
+            LOGGER.error("Reference usages failed.", e);
         }
         return result;
     }
@@ -406,7 +434,7 @@ public enum DocumentEnum {
                 for (String id : p.getMediaLinks()) {
                     if (id.equalsIgnoreCase(scriptId)) {
                         result.add("</br><a href=\"aswebdataPagexEdit?pId=" + p.getId() + "\" > Page [" + p.getName() + "] </a> - " +
-                                "<a href=\"aswebdataPagexScriptsShow?ownerId=" + p.getId() + "\" > MediaLinks </a>");
+                                "<a href=\"aswebdataPagexMediaLinksShow?ownerId=" + p.getId() + "\" > MediaLinks </a>");
                     }
                 }
             }
@@ -414,7 +442,7 @@ public enum DocumentEnum {
                 for (String id : b.getMediaLinks()) {
                     if (id.equalsIgnoreCase(scriptId)) {
                         result.add("</br><a href=\"aswebdataBoxEdit?pId=" + b.getId() + "\" > Box [" + b.getName() + "] </a> - " +
-                                "<a href=\"aswebdataBoxScriptsShow?ownerId=" + b.getId() + "\" > MediaLinks </a>");
+                                "<a href=\"aswebdataBoxMediaLinksShow?ownerId=" + b.getId() + "\" > MediaLinks </a>");
                     }
                 }
             }
@@ -422,14 +450,25 @@ public enum DocumentEnum {
                 for (String id : pt.getMediaLinks()) {
                     if (id.equalsIgnoreCase(scriptId)) {
                         result.add("</br><a href=\"assitedataPageTemplateEdit?pId=" + pt.getId() + "\" > PageTemplete [" + pt.getName() + "] </a> - " +
-                                "<a href=\"assitedataPageTemplateScriptsShow?ownerId=" + pt.getId() + "\" > MediaLinks </a>");
+                                "<a href=\"assitedataPageTemplateMediaLinksShow?ownerId=" + pt.getId() + "\" > MediaLinks </a>");
                     }
                 }
             }
+            for(Brand brand: brandService.getBrands()) {
+                for (String id : brand.getMediaLinks()) {
+                    if (id.equalsIgnoreCase(scriptId)) {
+                        result.add("</br><a href=\"asbrandBrandEdit?pId=" + brand.getId() + "\" > Brand [" + brand.getName() + "] </a> - " +
+                                "<a href=\"asbrandBrandMediaLinksShow?ownerId=" + brand.getId() + "\" > MediaLinks </a>");
+                    }
+                }
+            }
+
         } catch (ASWebDataServiceException e) {
             LOGGER.error("failed to use WebDataService.", e);
         } catch (ASSiteDataServiceException e) {
             LOGGER.error("failed to use SiteDataService", e);
+        } catch (ASBrandServiceException e) {
+            LOGGER.error("failed to use BrandService", e);
         }
         return result;
     }
@@ -829,10 +868,13 @@ public enum DocumentEnum {
             result.addAll(findUsagesOfLocalizationBundleInBoxes(bundleId));
             result.addAll(findUsagesOfLocalizationBundleInPages(bundleId));
             result.addAll(findUsagesOfLocalizationBundleInTemplates(bundleId));
+            result.addAll(findUsageOfLocalizationBundleInBrands(bundleId));
         } catch (ASWebDataServiceException e) {
             LOGGER.error("failed to use ASWebDataService.", e);
         } catch (ASSiteDataServiceException e) {
             LOGGER.error("failed to use ASSiteDataService.", e);
+        } catch (ASBrandServiceException e) {
+            LOGGER.error("failed to use ASBrandService.", e);
         }
 
         return result;
@@ -886,6 +928,24 @@ public enum DocumentEnum {
                     .build();
 
             responses.addAll(findUsages(bundleId, pageTemplate.getLocalizations(), response));
+        }
+
+        return responses;
+    }
+
+    private static List<String> findUsageOfLocalizationBundleInBrands(String bundleId) throws ASBrandServiceException {
+        List<String> responses = new ArrayList<String>();
+
+        for (Brand brand : brandService.getBrands()) {
+            String response = new ResponseBuilder()
+                    .setContainerUrlType("asbrandBrand")
+                    .setContainerType("Brand")
+                    .setContainerId(brand.getId())
+                    .setContainerName(brand.getName())
+                    .setContentType("Localizations")
+                    .build();
+
+            responses.addAll(findUsages(bundleId, brand.getLocalizations(), response));
         }
 
         return responses;
