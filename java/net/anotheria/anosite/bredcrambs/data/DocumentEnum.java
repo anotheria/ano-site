@@ -5,13 +5,19 @@ import net.anotheria.anoprise.metafactory.MetaFactoryException;
 import net.anotheria.anosite.gen.asbrand.data.Brand;
 import net.anotheria.anosite.gen.asbrand.service.ASBrandServiceException;
 import net.anotheria.anosite.gen.asbrand.service.IASBrandService;
+import net.anotheria.anosite.gen.asfeature.data.BrandFeature;
+import net.anotheria.anosite.gen.asfeature.data.Feature;
+import net.anotheria.anosite.gen.asfeature.service.ASFeatureServiceException;
+import net.anotheria.anosite.gen.asfeature.service.IASFeatureService;
 import net.anotheria.anosite.gen.aslayoutdata.data.PageLayout;
 import net.anotheria.anosite.gen.aslayoutdata.service.ASLayoutDataServiceException;
 import net.anotheria.anosite.gen.aslayoutdata.service.IASLayoutDataService;
 import net.anotheria.anosite.gen.assitedata.data.EntryPoint;
+import net.anotheria.anosite.gen.assitedata.data.MediaLink;
 import net.anotheria.anosite.gen.assitedata.data.NaviItem;
 import net.anotheria.anosite.gen.assitedata.data.PageAlias;
 import net.anotheria.anosite.gen.assitedata.data.PageTemplate;
+import net.anotheria.anosite.gen.assitedata.data.Script;
 import net.anotheria.anosite.gen.assitedata.data.Site;
 import net.anotheria.anosite.gen.assitedata.service.ASSiteDataServiceException;
 import net.anotheria.anosite.gen.assitedata.service.IASSiteDataService;
@@ -172,6 +178,7 @@ public enum DocumentEnum {
     private static IASSiteDataService siteDataService;
     private static IASLayoutDataService layoutDataService;
     private static IASBrandService brandService;
+    private static IASFeatureService featureService;
 
     static {
         try {
@@ -179,6 +186,7 @@ public enum DocumentEnum {
             siteDataService = MetaFactory.get(IASSiteDataService.class);
             layoutDataService = MetaFactory.get(IASLayoutDataService.class);
             brandService = MetaFactory.get(IASBrandService.class);
+            featureService = MetaFactory.get(IASFeatureService.class);
         } catch (MetaFactoryException e) {
             LOGGER.error(MarkerFactory.getMarker("FATAL"), "Services init failure", e);
         }
@@ -641,10 +649,49 @@ public enum DocumentEnum {
                     }
                 }
             }
+
+            for (Script script: siteDataService.getScripts()) {
+                for (String guard : script.getGuards()) {
+                    if (searchedId.equalsIgnoreCase(guard)) {
+                        result.add("</br><a href=\"assitedataScriptEdit?pId=" + script.getId() + "\" > Script [" + script.getName() + "] </a> - " +
+                                "<a href=\"assitedataScriptGuardsShow?ownerId=" + script.getId() + "\" > Guards </a>");
+                    }
+                }
+            }
+
+            for (MediaLink mediaLink: siteDataService.getMediaLinks()) {
+                for (String guard : mediaLink.getGuards()) {
+                    if (searchedId.equalsIgnoreCase(guard)) {
+                        result.add("</br><a href=\"assitedataMediaLinkEdit?pId=" + mediaLink.getId() + "\" > MediaLink [" + mediaLink.getName() + "] </a> - " +
+                                "<a href=\"assitedataMediaLinkGuardsShow?ownerId=" + mediaLink.getId() + "\" > Guards </a>");
+                    }
+                }
+            }
+
+            for (Feature feature: featureService.getFeatures()) {
+                for (String guard : feature.getGuards()) {
+                    if (searchedId.equalsIgnoreCase(guard)) {
+                        result.add("</br><a href=\"asfeatureFeatureEdit?pId=" + feature.getId() + "\" > Feature [" + feature.getName() + "] </a> - " +
+                                "<a href=\"asfeatureFeatureGuardsShow?ownerId=" + feature.getId() + "\" > Guards </a>");
+                    }
+                }
+            }
+
+            for (BrandFeature feature: featureService.getBrandFeatures()) {
+                for (String guard : feature.getGuards()) {
+                    if (searchedId.equalsIgnoreCase(guard)) {
+                        result.add("</br><a href=\"asfeatureBrandFeatureEdit?pId=" + feature.getId() + "\" > Brand Feature [" + feature.getName() + "] </a> - " +
+                                "<a href=\"asfeatureBrandFeatureGuardsShow?ownerId=" + feature.getId() + "\" > Guards </a>");
+                    }
+                }
+            }
+
         } catch (ASWebDataServiceException e) {
             LOGGER.error("failed to use WebDataService.", e);
         } catch (ASSiteDataServiceException e) {
             LOGGER.error("failed to use SiteDataService.", e);
+        } catch (ASFeatureServiceException e) {
+            LOGGER.error("failed to use FeatureService.", e);
         }
         return result;
     }
