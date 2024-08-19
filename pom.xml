@@ -11,7 +11,7 @@
 	<name>anotheria.net site engine</name>
 
 	<properties>
-		<ano-doc.version>4.1.0</ano-doc.version>
+		<ano-doc.version>4.2.0-SNAPSHOT</ano-doc.version>
 		<ano-util.version>4.0.0</ano-util.version>
 		<ano-tags.version>4.0.0</ano-tags.version>
 		<ano-web.version>4.0.0</ano-web.version>
