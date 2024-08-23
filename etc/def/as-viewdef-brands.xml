@@ -1,0 +1,41 @@
+<view name="Brands" title="Brands" requiredroles="admin,developer,editor">
+    <sections>
+        <section title="Brands" type="module">
+            <module>ASBrand</module>
+            <document>Brand</document>
+            <filter name="AZ" field="name"/>
+            <elements>
+                <element type="field" name="id" comparable="true">
+                    <decorator name="idToA">
+                        <rule>3</rule>
+                    </decorator>
+                </element>
+                <element type="field" name="name" comparable="default">
+                    <decorator name="editLink" />
+                </element>
+                <element type="field" name="defaultBrand" comparable="false"/>
+                <element type="field" name="urlsToMap" comparable="false"/>
+            </elements>
+            <dialog name="Edit" title="Edit Brand">
+                <elements>
+                    <element type="empty" />
+                    <element type="field" name="id" readonly="true" />
+                    <element type="field" name="name" />
+                    <element type="field" name="defaultBrand"/>
+                    <element type="field" name="urlsToMap"/>
+                    <element type="field" name="localizations"/>
+                    <element type="field" name="mediaLinks"/>
+                    <element type="field" name="attributes"/>
+                    <element type="list">
+                        <element type="function" name="updateAndClose" />
+                        <element type="function" name="updateAndStay" />
+                        <element type="function" name="cancel" />
+                        <element type="function" name="transfer" />
+                        <element type="function" name="lock" />
+                        <element type="function" name="unlock" />
+                    </element>
+                </elements>
+            </dialog>
+        </section>
+    </sections>
+</view>

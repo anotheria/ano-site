@@ -2,7 +2,7 @@ package net.anotheria.anosite.content.variables;
 
 import static net.anotheria.anosite.content.variables.VariablesUtility.replaceVariables;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import junit.framework.Assert;
 import net.anotheria.anoprise.metafactory.Extension;

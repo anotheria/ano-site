@@ -1,6 +1,6 @@
 package net.anotheria.anosite.guard;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import net.anotheria.anoplass.api.APIFinder;
 import net.anotheria.anosite.api.configuration.SystemConfigurationAPI;

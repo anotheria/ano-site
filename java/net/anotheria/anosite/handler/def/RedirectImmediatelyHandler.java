@@ -7,8 +7,8 @@ import net.anotheria.anosite.handler.BoxHandlerResponse;
 import net.anotheria.anosite.handler.ResponseRedirectImmediately;
 import net.anotheria.anosite.handler.exception.BoxSubmitException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import static net.anotheria.util.StringUtils.*;
 

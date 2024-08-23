@@ -15,8 +15,8 @@ import net.anotheria.anosite.wizard.api.WizardStepAO;
 import net.anotheria.anosite.wizard.api.exception.WizardAPIException;
 import net.anotheria.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Default WizardStep handler - which allow adjusting to configured step.

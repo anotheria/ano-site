@@ -14,6 +14,24 @@
         </property>
 		<link name="accessOperation" type="single" target="AnoAccessConfiguration.AccessOperation" />
 	</document>
+  <document name="BrandFeature">
+      <property type="string" name="name"/>
+      <property type="boolean" name="enabled" />
+      <property type="boolean" name="activeInProduction"/>
+      <property type="boolean" name="obsolete" />
+      <property type="text" name="description" />
+      <property name="guards" type="list">
+          <content>
+              <link name="guard" type="single" target="ASFederatedData.GuardDef"/>
+          </content>
+      </property>
+      <property name="brands" type="list">
+          <content>
+              <link name="brand" type="single" target="ASBrand.Brand"/>
+          </content>
+      </property>
+      <link name="accessOperation" type="single" target="AnoAccessConfiguration.AccessOperation" />
+  </document>
   </module>
 
   <module name="ASExperiment">

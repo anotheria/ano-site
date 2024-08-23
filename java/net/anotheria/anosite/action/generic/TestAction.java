@@ -1,7 +1,7 @@
 package net.anotheria.anosite.action.generic;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import net.anotheria.anosite.action.Action;
 import net.anotheria.anosite.action.ActionCommand;

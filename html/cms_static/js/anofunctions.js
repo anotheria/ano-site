@@ -375,6 +375,27 @@ function notification(text, href) {
 	return false;
 }
 
+function notificationAutoClose(text) {
+	var el = $('.lightbox');
+	el.show();
+	el.find('.box_in .text_here').html(text);
+	$('.lightbox .box').css('width', 'auto');
+	$('.lightbox .box').width($('.lightbox .box_in').width());
+	var wid = el.find('.box').width();
+	var box = el.find('.box');
+	var hig = el.find('.box').height();
+	box.css('left', '50%');
+	box.css('margin-left', -wid / 2);
+	//box.css('top', link.offset().top);
+	box.css('top', '50%');
+	box.css('margin-top', -hig / 2);
+	box.css('position', 'fixed');
+	setTimeout(function(){
+		$('.lightbox').hide();
+	}, 1000);
+	return false;
+}
+
 $('.lang_s_open .button').live('click',
 		function() {
 			saveCookie();

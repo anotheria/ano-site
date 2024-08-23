@@ -5,7 +5,7 @@ import net.anotheria.util.content.element.ContentElement;
 import net.anotheria.util.content.element.DynamicElement;
 import net.anotheria.util.content.element.StaticElement;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +40,7 @@ public class VariablesUtility {
 		defaultProcessors.put(DefinitionPrefixes.PREFIX_API_SESSION_ATTRIBUTE, p);
 		defaultProcessors.put(DefinitionPrefixes.PREFIX_BOX_ATTRIBUTE, p);
 		defaultProcessors.put(DefinitionPrefixes.PREFIX_PAGE_ATTRIBUTE, p);
+		defaultProcessors.put(DefinitionPrefixes.PREFIX_BRAND_ATTRIBUTE, p);
 		defaultProcessors.put(DefinitionPrefixes.PREFIX_LOCALIZATION_MESSAGE, new LocalizationProcessor());
 		
 		defaultProcessors.put(DefinitionPrefixes.PREFIX_IMAGE_LINK, new ImageLinkProcessor());

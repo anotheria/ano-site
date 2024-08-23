@@ -52,6 +52,7 @@
 				<element type="function" name="unlock" />
 				<element type="function" name="showUsages" />
 				<element type="function" name="version" />
+				<element type="function" name="transfer" />
 			</elements>
 			<dialog name="Edit" title="Edit Page">
 				<elements>
@@ -85,6 +86,7 @@
 						<element type="function" name="updateAndClose" />
 						<element type="function" name="updateAndStay" />
 						<element type="function" name="cancel" />
+						<element type="function" name="transfer" />
 						<element type="function" name="lock" />
 						<element type="function" name="unlock" />
 					</element>
@@ -141,6 +143,7 @@
 				<element type="function" name="unlock" />
                 <element type="function" name="showUsages" />
 				<element type="function" name="version" />
+				<element type="function" name="transfer" />
 			</elements>
 			<dialog name="Edit" title="Edit Box">
 				<elements>
@@ -175,6 +178,7 @@
 						<element type="function" name="updateAndClose" />
 						<element type="function" name="updateAndStay" />
 						<element type="function" name="cancel" />
+						<element type="function" name="transfer" />
 						<element type="function" name="lock" />
 						<element type="function" name="unlock" />
 					</element>
@@ -212,6 +216,7 @@
 				<element type="function" name="lock" />
 				<element type="function" name="unlock" />
                 <element type="function" name="showUsages" />
+				<element type="function" name="transfer" />
 			</elements>
 			<dialog name="Edit" title="Edit Attribute">
 				<elements>
@@ -227,6 +232,7 @@
 						<element type="function" name="updateAndClose" />
 						<element type="function" name="updateAndStay" />
 						<element type="function" name="cancel" />
+						<element type="function" name="transfer" />
 						<element type="function" name="lock" />
 						<element type="function" name="unlock" />
 					</element>

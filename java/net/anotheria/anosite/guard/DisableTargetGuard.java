@@ -3,7 +3,7 @@ package net.anotheria.anosite.guard;
 import net.anotheria.asg.data.DataObject;
 import net.anotheria.asg.exception.ASGRuntimeException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author Vlad Lukjanenko

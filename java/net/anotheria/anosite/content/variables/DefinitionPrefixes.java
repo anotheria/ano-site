@@ -49,6 +49,10 @@ public final class DefinitionPrefixes {
 	 */
 	public static final String PREFIX_PAGE_ATTRIBUTE = "pa";
 	/**
+	 * Brand attribute.
+	 */
+	public static final String PREFIX_BRAND_ATTRIBUTE = "b_a";
+	/**
 	 * Constant, performed by constants processor.
 	 */
 	public static final String PREFIX_CONSTANT = "c";

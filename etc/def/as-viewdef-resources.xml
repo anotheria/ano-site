@@ -35,6 +35,7 @@
 							<element type="function" name="updateAndClose"/>
 							<element type="function" name="updateAndStay"/>
 							<element type="function" name="cancel"/>
+							<element type="function" name="transfer" />
 							<element type="function" name="lock"/>
 	        	        	<element type="function" name="unlock"/>
 						</element>
@@ -76,6 +77,7 @@
 							<element type="function" name="updateAndClose"/>
 							<element type="function" name="updateAndStay"/>
 							<element type="function" name="cancel"/>
+							<element type="function" name="transfer" />
 							<element type="function" name="lock"/>
 	        	        	<element type="function" name="unlock"/>
 						</element>
@@ -123,12 +125,60 @@
 							<element type="function" name="updateAndClose"/>
 							<element type="function" name="updateAndStay"/>
 							<element type="function" name="cancel"/>
+							<element type="function" name="transfer" />
 							<element type="function" name="lock"/>
 	        		        <element type="function" name="unlock"/>
 						</element>
         			</elements>
       			</dialog>
 	    	</section>
+
+			<section title="Pdf Templates" type="module">
+				<module>ASResourceData</module>
+				<document>PdfTemplate</document>
+				<filter name="AZ" field="name"/>
+				<filter name="MissingTranslation" field="Any" />
+				<elements>
+					<element type="field" name="id" comparable="default">
+						<decorator name="idToA">
+							<rule>3</rule>
+						</decorator>
+					</element>
+					<element type="field" name="name" comparable="true">
+						<decorator name="editLink"/>
+					</element>
+					<element type="function" name="edit"/>
+					<element type="function" name="duplicate"/>
+					<element type="function" name="deleteWithConfirmation"/>
+					<element type="function" name="lock"/>
+					<element type="function" name="unlock"/>
+				</elements>
+				<dialog name="Edit" title="Edit Pdf Templates">
+					<elements>
+						<element type="empty"/>
+						<element type="field" name="id" readonly="true"/>
+						<element type="field" name="name"/>
+						<element type="field" name="showPageNumbers"/>
+						<element type="field" name="applyBackgroundStyles"/>
+						<element type="field" name="headerMargin"/>
+						<element type="field" name="headerTemplate"/>
+						<element type="field" name="footerMargin"/>
+						<element type="field" name="footerTemplate"/>
+						<element type="field" name="contentTemplate"/>
+						<element type="field" name="localizations" />
+
+						<element type="empty"/>
+						<element type="list">
+							<element type="function" name="updateAndClose"/>
+							<element type="function" name="updateAndStay"/>
+							<element type="function" name="cancel"/>
+							<element type="function" name="transfer" />
+							<element type="function" name="lock"/>
+							<element type="function" name="unlock"/>
+						</element>
+					</elements>
+				</dialog>
+			</section>
 
 			<section title="Push Notification Templates" type="module">
 				<module>ASResourceData</module>
@@ -162,6 +212,7 @@
 							<element type="function" name="updateAndClose" />
 							<element type="function" name="updateAndStay" />
 							<element type="function" name="cancel" />
+							<element type="function" name="transfer" />
 							<element type="function" name="lock" />
 							<element type="function" name="unlock" />
 						</element>
@@ -215,6 +266,7 @@
                     	    <element type="function" name="updateAndClose"/>
 							<element type="function" name="updateAndStay"/>
 							<element type="function" name="cancel"/>
+							<element type="function" name="transfer" />
 							<element type="function" name="lock"/>
 	        		        <element type="function" name="unlock"/>
 						</element>
@@ -260,6 +312,7 @@
                     	    <element type="function" name="updateAndClose"/>
 							<element type="function" name="updateAndStay"/>
 							<element type="function" name="cancel"/>
+							<element type="function" name="transfer" />
 							<element type="function" name="lock"/>
 	        		        <element type="function" name="unlock"/>
 						</element>

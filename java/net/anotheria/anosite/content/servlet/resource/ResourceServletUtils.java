@@ -5,8 +5,8 @@ import net.anotheria.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -62,7 +62,7 @@ final class ResourceServletUtils {
 	/**
 	 * Splits the REST-like path of the request URI into tokens.
 	 *
-	 * @param request {@link javax.servlet.http.HttpServletRequest}
+	 * @param request {@link jakarta.servlet.http.HttpServletRequest}
 	 * @return parameter string splitted
 	 */
 	protected static String[] parsePathParameters(HttpServletRequest request) {
@@ -72,7 +72,7 @@ final class ResourceServletUtils {
 	/**
 	 * Streams some file to the response.
 	 *
-	 * @param response {@link javax.servlet.http.HttpServletResponse}
+	 * @param response {@link jakarta.servlet.http.HttpServletResponse}
 	 * @param file	 {@link java.io.File} to stream
 	 * @throws java.io.IOException on IO errors
 	 */

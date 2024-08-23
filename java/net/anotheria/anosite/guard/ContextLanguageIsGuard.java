@@ -1,6 +1,6 @@
 package net.anotheria.anosite.guard;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import net.anotheria.anodoc.util.context.ContextManager;
 import net.anotheria.asg.data.DataObject;
