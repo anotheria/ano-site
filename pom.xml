@@ -2,7 +2,7 @@
 	<parent>
 		<groupId>net.anotheria</groupId>
 		<artifactId>ano-doc-parent</artifactId>
-		<version>4.0.0</version>
+		<version>4.2.0-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -11,7 +11,7 @@
 	<name>anotheria.net site engine</name>
 
 	<properties>
-		<ano-doc.version>4.1.2</ano-doc.version>
+		<ano-doc.version>4.2.0-SNAPSHOT</ano-doc.version>
 		<ano-util.version>4.0.0</ano-util.version>
 		<ano-tags.version>4.0.0</ano-tags.version>
 		<ano-web.version>4.0.0</ano-web.version>
@@ -298,24 +298,6 @@
 						</execution>
 					</executions>
 				</plugin>
-<!--				<plugin>-->
-<!--					<groupId>org.apache.maven.plugins</groupId>-->
-<!--					<artifactId>maven-site-plugin</artifactId>-->
-<!--					<version>3.3</version>-->
-<!--					<configuration>-->
-<!--						<reportPlugins>-->
-<!--							<plugin>-->
-<!--								<groupId>org.apache.maven.plugins</groupId>-->
-<!--								<artifactId>maven-javadoc-plugin</artifactId>-->
-<!--								<version>2.9.1</version>-->
-<!--								<configuration>-->
-<!--									<additionalparam>${javadoc.opts}</additionalparam>-->
-<!--								</configuration>-->
-<!--							</plugin>-->
-<!--						</reportPlugins>-->
-<!--					</configuration>-->
-<!--				</plugin>-->
-
 			</plugins>
 		</pluginManagement>
 	</build>
