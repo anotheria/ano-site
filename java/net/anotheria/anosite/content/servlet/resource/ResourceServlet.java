@@ -8,13 +8,13 @@ import net.anotheria.anosite.shared.ResourceServletMappingConfig;
 import net.anotheria.moskito.web.MoskitoHttpServlet;
 import net.anotheria.util.StringUtils;
 import net.anotheria.webutils.filehandling.actions.FileStorage;
+import net.anotheria.webutils.filehandling.beans.TemporaryFileHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -74,8 +74,8 @@ public abstract class ResourceServlet extends MoskitoHttpServlet {
 				return;
 			}
 			try {
-				File file = FileStorage.getFile(params[0]);
-				ResourceServletUtils.streamFile(res, file);
+				TemporaryFileHolder fileHolder = FileStorage.loadFile(params[0]);
+				ResourceServletUtils.streamFile(res, fileHolder);
 			} catch (IOException e) {
 				res.sendError(HttpServletResponse.SC_NOT_FOUND, "File " + params[0] + " not found! Probably deleted on disk. PATH = " + req.getPathInfo());
 			}
@@ -102,8 +102,8 @@ public abstract class ResourceServlet extends MoskitoHttpServlet {
 			}
 
 			try {
-				File file = FileStorage.getFile(fileName);
-				ResourceServletUtils.streamFile(res, file);
+				TemporaryFileHolder fileHolder = FileStorage.loadFile(fileName);
+				ResourceServletUtils.streamFile(res, fileHolder);
 			} catch (IOException e) {
 				res.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource " + fileName + " not found! Probably deleted on disk. PATH = " + req.getPathInfo());
 			}

@@ -1,7 +1,6 @@
 package net.anotheria.anosite.decorator;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 
 import net.anotheria.anosite.gen.asresourcedata.data.FileLink;
 import net.anotheria.anosite.gen.asresourcedata.data.Image;
@@ -9,7 +8,9 @@ import net.anotheria.asg.data.DataObject;
 import net.anotheria.asg.util.decorators.IAttributeDecorator;
 import net.anotheria.util.IOUtils;
 import net.anotheria.util.NumberUtils;
+import net.anotheria.util.StringUtils;
 import net.anotheria.webutils.filehandling.actions.FileStorage;
+import net.anotheria.webutils.filehandling.beans.TemporaryFileHolder;
 
 
 /**
@@ -38,23 +39,23 @@ public class FileSizeDecorator implements IAttributeDecorator{
 	}
 
 	private String processFile(String fileName){
-		
-		if (fileName==null || fileName.length()==0)
+		if (StringUtils.isEmpty(fileName))
 			return "No file";
-		String message = null;
-		FileInputStream fIn  = null;
+
+		String message;
+		ByteArrayInputStream bais  = null;
 		try{
-			File f = new File(FileStorage.fileStorageDir+File.separatorChar+fileName);
-			if (!f.exists()){
+			TemporaryFileHolder f = FileStorage.loadFile(fileName);
+			if (f == null) {
 				message = "Missing "+fileName;
 			}else{
-				fIn = new FileInputStream(f);
-				message = ""+NumberUtils.makeSizeString(fIn.available())+" "+fileName;
+				bais = new ByteArrayInputStream(f.getData());
+				message = NumberUtils.makeSizeString(bais.available()) + " " + fileName;
 			}
 		}catch(Exception e){
 			message = "Error: "+e.getMessage();
 		}finally{
-			IOUtils.closeIgnoringException(fIn);
+			IOUtils.closeIgnoringException(bais);
 		}
 		return message;
 	}

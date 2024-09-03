@@ -1,7 +1,6 @@
 package net.anotheria.anosite.decorator;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
@@ -11,7 +10,10 @@ import javax.imageio.stream.ImageInputStream;
 import net.anotheria.anosite.gen.asresourcedata.data.Image;
 import net.anotheria.asg.data.DataObject;
 import net.anotheria.asg.util.decorators.IAttributeDecorator;
+import net.anotheria.util.IOUtils;
+import net.anotheria.util.StringUtils;
 import net.anotheria.webutils.filehandling.actions.FileStorage;
+import net.anotheria.webutils.filehandling.beans.TemporaryFileHolder;
 
 /**
  * This decorator looks up the linked image file on the disk and displays the size of the binary file.
@@ -29,19 +31,22 @@ public class ImageSizeDecorator implements IAttributeDecorator {
 
 	private String processImage(Image img, String attributeName, String rule){
 		String fileName = img.getImage();
-		if (fileName==null || fileName.length()==0)
+		if (StringUtils.isEmpty(fileName))
 			return "No file";
+
 		String message = null;
-	
 		ImageInputStream iis = null;
+		ByteArrayInputStream bais = null;
+
 		try{
-			File f = new File(FileStorage.fileStorageDir+File.separatorChar+fileName);
-			if (!f.exists()){
-				return "Missing "+fileName;
+			TemporaryFileHolder f = FileStorage.loadFile(fileName);
+			if (f == null){
+				return "Missing " + fileName;
 			}
 			Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(fileName.substring(fileName.length()-3, fileName.length()));
 			ImageReader reader = readers.next();
-			iis = ImageIO.createImageInputStream(f);
+			bais = new ByteArrayInputStream(f.getData());
+			iis = ImageIO.createImageInputStream(bais);
 			reader.setInput(iis, false);
 			int nImageCount = reader.getNumImages(true);
 			if(nImageCount<1){
@@ -54,10 +59,8 @@ public class ImageSizeDecorator implements IAttributeDecorator {
 		}catch(Exception e){
 			message = "Error: "+e.getMessage();
 		}finally{
-			if(iis != null)
-				try {
-					iis.close();
-				} catch (IOException ignored) {}
+			IOUtils.closeIgnoringException(iis);
+			IOUtils.closeIgnoringException(bais);
 		}
 		return message;
 	}
