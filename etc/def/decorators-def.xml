@@ -13,8 +13,6 @@
     <decorator name="mediaLinks" class="net.anotheria.anosite.decorator.MediaLinksListCMS2Decorator"/>
     <decorator name="localizations" class="net.anotheria.anosite.decorator.LocalizationsListCMS2Decorator"/>
     <decorator name="linkTargetName" class="net.anotheria.anosite.decorator.LinkTargetNameDecorator"/>
-    <decorator name="fileSizeDecorator" class="net.anotheria.anosite.decorator.FileSizeDecorator"/>
-    <decorator name="imageSizeDecorator" class="net.anotheria.anosite.decorator.ImageSizeDecorator"/>
     <decorator name="roles" class="net.anotheria.anosite.decorator.RolesListCMS2Decorator"/>
     <decorator name="date" class="net.anotheria.anosite.decorator.DateDecorator"/>
 </decorators>
