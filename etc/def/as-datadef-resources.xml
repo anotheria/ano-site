@@ -58,13 +58,10 @@
 		<property name="alias" type="string" multilingual="true"/>
 		<property name="alt" type="string" multilingual="true"/>
 		<property name="image" type="image"/>
-		<property name="size" type="string"/>
-		<property name="pixels" type="string"/>
 	</document>
 	<document name="FileLink">
 		<property name="name" type="string"/>
 		<property name="title" type="string" multilingual="false"/>
 		<property name="file" type="image"/>
-		<property name="size" type="string"/>
 	</document>
   </module>

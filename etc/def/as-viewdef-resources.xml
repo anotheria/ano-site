@@ -236,14 +236,8 @@
 					</element>
 		            <element type="field" name="title" comparable="true"/>
 		            <element type="field" name="alias" comparable="true"/>
-			    <element type="field" name="alt" comparable="true"/>
+			    	<element type="field" name="alt" comparable="true"/>
         		    <element type="field" name="image" comparable="false"/>
-        		    <element type="field" name="size" comparable="false">
-        		    	<decorator name="fileSizeDecorator"/>
-        		    </element>
-         		    <element type="field" name="pixels" comparable="false">
-        		    	<decorator name="imageSizeDecorator"/>
-        		    </element>
         		    <element type="function" name="edit"/>
                     <element type="function" name="duplicate"/>
                     <element type="function" name="deleteWithConfirmation"/>
@@ -259,7 +253,7 @@
                         <element type="field" name="name" />
 	                    <element type="field" name="title"/>
     	                <element type="field" name="alias"/>
-			<element type="field" name="alt"/>
+						<element type="field" name="alt"/>
     	                <element type="field" name="image"/>
         				<element type="empty"/>
                         <element type="list">
@@ -290,9 +284,9 @@
 	        		   	<decorator name="editLink"/>
 					</element>
 		            <element type="field" name="title" comparable="true"/>
-        		    <element type="field" name="size" comparable="false">
-        		    	<decorator name="fileSizeDecorator"/>
-        		    </element>
+<!--        		    <element type="field" name="size" comparable="false">-->
+<!--        		    	<decorator name="fileSizeDecorator"/>-->
+<!--        		    </element>-->
                     <element type="function" name="edit"/>
                     <element type="function" name="duplicate"/>
                     <element type="function" name="deleteWithConfirmation"/>

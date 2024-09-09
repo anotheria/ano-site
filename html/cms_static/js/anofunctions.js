@@ -453,6 +453,18 @@ function customSubmit() {
 	}
 }
 
+function getFileInfo(fileName){
+	$.post('/cms/showFileInfo', {fileName: fileName}, function (resp){
+		if (resp.status == "ERROR") {
+			console.log('Error.', resp.errors._global);
+			return false;
+		}
+
+		$('#fileInfoSize').text(resp.data.size);
+		$('#fileInfoPixels').text(resp.data.pixels)
+	});
+}
+
 $(function() {
 	initAllCmsDocs();
 	initSelectedCmsDocsDeletion();
