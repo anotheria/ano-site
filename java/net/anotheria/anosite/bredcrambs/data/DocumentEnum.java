@@ -12,6 +12,9 @@ import net.anotheria.anosite.gen.asfeature.service.IASFeatureService;
 import net.anotheria.anosite.gen.aslayoutdata.data.PageLayout;
 import net.anotheria.anosite.gen.aslayoutdata.service.ASLayoutDataServiceException;
 import net.anotheria.anosite.gen.aslayoutdata.service.IASLayoutDataService;
+import net.anotheria.anosite.gen.asresourcedata.data.MailTemplate;
+import net.anotheria.anosite.gen.asresourcedata.service.ASResourceDataServiceException;
+import net.anotheria.anosite.gen.asresourcedata.service.IASResourceDataService;
 import net.anotheria.anosite.gen.assitedata.data.EntryPoint;
 import net.anotheria.anosite.gen.assitedata.data.MediaLink;
 import net.anotheria.anosite.gen.assitedata.data.NaviItem;
@@ -179,6 +182,7 @@ public enum DocumentEnum {
     private static IASLayoutDataService layoutDataService;
     private static IASBrandService brandService;
     private static IASFeatureService featureService;
+    private static IASResourceDataService resourceDataService;
 
     static {
         try {
@@ -187,6 +191,7 @@ public enum DocumentEnum {
             layoutDataService = MetaFactory.get(IASLayoutDataService.class);
             brandService = MetaFactory.get(IASBrandService.class);
             featureService = MetaFactory.get(IASFeatureService.class);
+            resourceDataService = MetaFactory.get(IASResourceDataService.class);
         } catch (MetaFactoryException e) {
             LOGGER.error(MarkerFactory.getMarker("FATAL"), "Services init failure", e);
         }
@@ -916,12 +921,15 @@ public enum DocumentEnum {
             result.addAll(findUsagesOfLocalizationBundleInPages(bundleId));
             result.addAll(findUsagesOfLocalizationBundleInTemplates(bundleId));
             result.addAll(findUsageOfLocalizationBundleInBrands(bundleId));
+            result.addAll(findUsageOfLocatizationBundleInMailTemplates(bundleId));
         } catch (ASWebDataServiceException e) {
             LOGGER.error("failed to use ASWebDataService.", e);
         } catch (ASSiteDataServiceException e) {
             LOGGER.error("failed to use ASSiteDataService.", e);
         } catch (ASBrandServiceException e) {
             LOGGER.error("failed to use ASBrandService.", e);
+        } catch (ASResourceDataServiceException e) {
+            LOGGER.error("failed to use ASResourceDataService.", e);
         }
 
         return result;
@@ -996,6 +1004,22 @@ public enum DocumentEnum {
         }
 
         return responses;
+    }
+
+    private static List<String> findUsageOfLocatizationBundleInMailTemplates(String bundleId) throws ASResourceDataServiceException {
+        List<String> responces = new ArrayList<>();
+        for (MailTemplate mailTemplate: resourceDataService.getMailTemplates()){
+            String response = new ResponseBuilder()
+                    .setContainerUrlType("asresourcedataMailTemplate")
+                    .setContainerType("Mail Template")
+                    .setContainerId(mailTemplate.getId())
+                    .setContainerName(mailTemplate.getName())
+                    .setContentType("Localizations")
+                    .build();
+
+            responces.addAll(findUsages(bundleId, mailTemplate.getLocalizations(), response));
+        }
+        return responces;
     }
 
     private static List<String> findUsages(String contentId, List<String> containerElemIds,
