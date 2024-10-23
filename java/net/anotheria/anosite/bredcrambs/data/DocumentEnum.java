@@ -12,6 +12,7 @@ import net.anotheria.anosite.gen.asfeature.service.IASFeatureService;
 import net.anotheria.anosite.gen.aslayoutdata.data.PageLayout;
 import net.anotheria.anosite.gen.aslayoutdata.service.ASLayoutDataServiceException;
 import net.anotheria.anosite.gen.aslayoutdata.service.IASLayoutDataService;
+import net.anotheria.anosite.gen.asresourcedata.data.LocalizationBundle;
 import net.anotheria.anosite.gen.asresourcedata.data.MailTemplate;
 import net.anotheria.anosite.gen.asresourcedata.service.ASResourceDataServiceException;
 import net.anotheria.anosite.gen.asresourcedata.service.IASResourceDataService;
@@ -922,6 +923,7 @@ public enum DocumentEnum {
             result.addAll(findUsagesOfLocalizationBundleInTemplates(bundleId));
             result.addAll(findUsageOfLocalizationBundleInBrands(bundleId));
             result.addAll(findUsageOfLocatizationBundleInMailTemplates(bundleId));
+            result.addAll(findUsageOfLocatizationBundleInAsParents(bundleId));
         } catch (ASWebDataServiceException e) {
             LOGGER.error("failed to use ASWebDataService.", e);
         } catch (ASSiteDataServiceException e) {
@@ -1007,7 +1009,7 @@ public enum DocumentEnum {
     }
 
     private static List<String> findUsageOfLocatizationBundleInMailTemplates(String bundleId) throws ASResourceDataServiceException {
-        List<String> responces = new ArrayList<>();
+        List<String> responses = new ArrayList<>();
         for (MailTemplate mailTemplate: resourceDataService.getMailTemplates()){
             String response = new ResponseBuilder()
                     .setContainerUrlType("asresourcedataMailTemplate")
@@ -1017,9 +1019,19 @@ public enum DocumentEnum {
                     .setContentType("Localizations")
                     .build();
 
-            responces.addAll(findUsages(bundleId, mailTemplate.getLocalizations(), response));
+            responses.addAll(findUsages(bundleId, mailTemplate.getLocalizations(), response));
         }
-        return responces;
+        return responses;
+    }
+
+    private static List<String> findUsageOfLocatizationBundleInAsParents(String bundleId) throws ASResourceDataServiceException {
+        List<String> responses = new ArrayList<>();
+        for (LocalizationBundle localizationBundle: resourceDataService.getLocalizationBundles()){
+            if (bundleId.equals(localizationBundle.getParentBundle())){
+                responses.add("</br><a href=\"asresourcedataLocalizationBundleEdit?pId=" + localizationBundle.getId() + "\" > Localization bundle [" + localizationBundle.getName() + "] </a> ");
+            }
+        }
+        return responses;
     }
 
     private static List<String> findUsages(String contentId, List<String> containerElemIds,
