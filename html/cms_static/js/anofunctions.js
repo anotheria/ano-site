@@ -465,6 +465,22 @@ function getFileInfo(fileName){
 	});
 }
 
+function sortTextData(doc, pid){
+	$.post('/cms/sortTextData', {doc: doc, pId: pid}, function (resp){
+		if (resp.status == "ERROR") {
+			console.log('Error.', resp.errors._global);
+			notification(resp.errors._global);
+			return false;
+		}
+
+		if (resp.data.isUpdated){
+			location.reload();
+		} else {
+			notification("No data for sort");
+		}
+	});
+}
+
 $(function() {
 	initAllCmsDocs();
 	initSelectedCmsDocsDeletion();

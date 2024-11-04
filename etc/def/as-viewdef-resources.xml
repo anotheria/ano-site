@@ -78,6 +78,7 @@
 							<element type="function" name="updateAndStay"/>
 							<element type="function" name="cancel"/>
 							<element type="function" name="transfer" />
+							<element type="function" name="sortTextData"/>
 							<element type="function" name="lock"/>
 	        	        	<element type="function" name="unlock"/>
 						</element>
