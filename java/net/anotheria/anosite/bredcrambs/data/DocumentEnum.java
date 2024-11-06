@@ -5,6 +5,9 @@ import net.anotheria.anoprise.metafactory.MetaFactoryException;
 import net.anotheria.anosite.gen.asbrand.data.Brand;
 import net.anotheria.anosite.gen.asbrand.service.ASBrandServiceException;
 import net.anotheria.anosite.gen.asbrand.service.IASBrandService;
+import net.anotheria.anosite.gen.ascustomaction.data.ActionMappingDef;
+import net.anotheria.anosite.gen.ascustomaction.service.ASCustomActionServiceException;
+import net.anotheria.anosite.gen.ascustomaction.service.IASCustomActionService;
 import net.anotheria.anosite.gen.asfeature.data.BrandFeature;
 import net.anotheria.anosite.gen.asfeature.data.Feature;
 import net.anotheria.anosite.gen.asfeature.service.ASFeatureServiceException;
@@ -184,6 +187,7 @@ public enum DocumentEnum {
     private static IASBrandService brandService;
     private static IASFeatureService featureService;
     private static IASResourceDataService resourceDataService;
+    private static IASCustomActionService customActionService;
 
     static {
         try {
@@ -193,6 +197,7 @@ public enum DocumentEnum {
             brandService = MetaFactory.get(IASBrandService.class);
             featureService = MetaFactory.get(IASFeatureService.class);
             resourceDataService = MetaFactory.get(IASResourceDataService.class);
+            customActionService = MetaFactory.get(IASCustomActionService.class);
         } catch (MetaFactoryException e) {
             LOGGER.error(MarkerFactory.getMarker("FATAL"), "Services init failure", e);
         }
@@ -922,8 +927,9 @@ public enum DocumentEnum {
             result.addAll(findUsagesOfLocalizationBundleInPages(bundleId));
             result.addAll(findUsagesOfLocalizationBundleInTemplates(bundleId));
             result.addAll(findUsageOfLocalizationBundleInBrands(bundleId));
-            result.addAll(findUsageOfLocatizationBundleInMailTemplates(bundleId));
-            result.addAll(findUsageOfLocatizationBundleInAsParents(bundleId));
+            result.addAll(findUsageOfLocalizationBundleInMailTemplates(bundleId));
+            result.addAll(findUsageOfLocalizationBundleInAsParents(bundleId));
+            result.addAll(findUsageOfLocalizationBundleInActionMappings(bundleId));
         } catch (ASWebDataServiceException e) {
             LOGGER.error("failed to use ASWebDataService.", e);
         } catch (ASSiteDataServiceException e) {
@@ -932,6 +938,8 @@ public enum DocumentEnum {
             LOGGER.error("failed to use ASBrandService.", e);
         } catch (ASResourceDataServiceException e) {
             LOGGER.error("failed to use ASResourceDataService.", e);
+        } catch (ASCustomActionServiceException e) {
+            LOGGER.error("failed to use ASCustomActionService.", e);
         }
 
         return result;
@@ -1008,7 +1016,7 @@ public enum DocumentEnum {
         return responses;
     }
 
-    private static List<String> findUsageOfLocatizationBundleInMailTemplates(String bundleId) throws ASResourceDataServiceException {
+    private static List<String> findUsageOfLocalizationBundleInMailTemplates(String bundleId) throws ASResourceDataServiceException {
         List<String> responses = new ArrayList<>();
         for (MailTemplate mailTemplate: resourceDataService.getMailTemplates()){
             String response = new ResponseBuilder()
@@ -1024,12 +1032,28 @@ public enum DocumentEnum {
         return responses;
     }
 
-    private static List<String> findUsageOfLocatizationBundleInAsParents(String bundleId) throws ASResourceDataServiceException {
+    private static List<String> findUsageOfLocalizationBundleInAsParents(String bundleId) throws ASResourceDataServiceException {
         List<String> responses = new ArrayList<>();
         for (LocalizationBundle localizationBundle: resourceDataService.getLocalizationBundles()){
             if (bundleId.equals(localizationBundle.getParentBundle())){
                 responses.add("</br><a href=\"asresourcedataLocalizationBundleEdit?pId=" + localizationBundle.getId() + "\" > Localization bundle [" + localizationBundle.getName() + "] </a> ");
             }
+        }
+        return responses;
+    }
+
+    private static List<String> findUsageOfLocalizationBundleInActionMappings(String bundleId) throws ASCustomActionServiceException {
+        List<String> responses = new ArrayList<>();
+        for (ActionMappingDef actionMappingDef: customActionService.getActionMappingDefs()) {
+            String response = new ResponseBuilder()
+                    .setContainerUrlType("ascustomactionActionMappingDef")
+                    .setContainerType("Action Mapping")
+                    .setContainerId(actionMappingDef.getId())
+                    .setContainerName(actionMappingDef.getName())
+                    .setContentType("LocalizationBundles")
+                    .build();
+
+            responses.addAll(findUsages(bundleId, actionMappingDef.getLocalizationBundles(), response));
         }
         return responses;
     }
