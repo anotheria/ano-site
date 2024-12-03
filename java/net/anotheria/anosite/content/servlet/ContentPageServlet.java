@@ -1992,6 +1992,7 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 
 		try {
 			Site site = siteDataService.getSite(template.getSite());
+			ret.setName(site.getName());
 			ret.setSubtitle(site.getSubtitle());
 			ret.setTitle(site.getTitle());
 			ret.setKeywords(VariablesUtility.replaceVariables(req, site.getKeywords()));
