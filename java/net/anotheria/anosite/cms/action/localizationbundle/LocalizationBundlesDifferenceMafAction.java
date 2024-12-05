@@ -1,4 +1,4 @@
-package net.anotheria.anosite.cms.action;
+package net.anotheria.anosite.cms.action.localizationbundle;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,8 +12,6 @@ import net.anotheria.maf.action.ActionCommand;
 import net.anotheria.maf.action.ActionMapping;
 import net.anotheria.util.NumberUtils;
 
-import java.text.NumberFormat;
-import java.util.Comparator;
 import java.util.List;
 
 public class LocalizationBundlesDifferenceMafAction extends BaseToolsAction {

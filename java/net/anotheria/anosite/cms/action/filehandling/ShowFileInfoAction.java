@@ -1,15 +1,14 @@
-package net.anotheria.anosite.cms.action;
+package net.anotheria.anosite.cms.action.filehandling;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import net.anotheria.asg.util.filestorage.FileStorage;
+import net.anotheria.asg.util.filestorage.TemporaryFileHolder;
 import net.anotheria.maf.action.ActionCommand;
 import net.anotheria.maf.action.ActionMapping;
 import net.anotheria.maf.json.JSONResponse;
 import net.anotheria.util.NumberUtils;
 import net.anotheria.util.StringUtils;
-import net.anotheria.webutils.actions.BaseAction;
-import net.anotheria.webutils.filehandling.actions.FileStorage;
-import net.anotheria.webutils.filehandling.beans.TemporaryFileHolder;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -24,7 +23,7 @@ import java.io.PrintWriter;
 /**
  * Return info about file (size and dimension (for images) for now).
  */
-public class ShowFileInfoAction extends BaseAction {
+public class ShowFileInfoAction extends BaseFileHandlingAction {
     /**
      * {@link Logger} instance.
      */

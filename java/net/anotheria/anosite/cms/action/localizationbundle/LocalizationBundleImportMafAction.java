@@ -1,4 +1,4 @@
-package net.anotheria.anosite.cms.action;
+package net.anotheria.anosite.cms.action.localizationbundle;
 
 import net.anotheria.anosite.gen.shared.action.BaseToolsAction;
 import net.anotheria.maf.action.ActionCommand;

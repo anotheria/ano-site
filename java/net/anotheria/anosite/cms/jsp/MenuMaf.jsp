@@ -60,7 +60,7 @@
             </div>
         </div>
         <ul class="main_navigation">
-            <ano:iterate name="mainNavigation" type="net.anotheria.webutils.bean.NavigationItemBean" id="NaviItem">
+            <ano:iterate name="mainNavigation" type="net.anotheria.anosite.cms.bean.NavigationItemBean" id="NaviItem">
                 <ano:equal name="NaviItem" property="active" value="true">
                     <li class="opened"><a><ano:write name="NaviItem" property="caption"/></a>
                         <ul>

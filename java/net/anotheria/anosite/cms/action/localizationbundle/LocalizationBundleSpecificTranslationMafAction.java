@@ -1,4 +1,4 @@
-package net.anotheria.anosite.cms.action;
+package net.anotheria.anosite.cms.action.localizationbundle;
 
 import net.anotheria.anoprise.metafactory.MetaFactory;
 import net.anotheria.anoprise.metafactory.MetaFactoryException;
@@ -15,13 +15,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
 
-public class LocalizationBundleTranslationMafAction extends BaseToolsAction {
+public class LocalizationBundleSpecificTranslationMafAction extends BaseToolsAction {
 
     private IASResourceDataService iasResourceDataService;
 
-    private static Logger log = LoggerFactory.getLogger(LocalizationBundleTranslationMafAction.class);
+    private static Logger log = LoggerFactory.getLogger(LocalizationBundleSpecificTranslationMafAction.class);
 
-    public LocalizationBundleTranslationMafAction() {
+    public LocalizationBundleSpecificTranslationMafAction() {
         try {
             iasResourceDataService = MetaFactory.get(IASResourceDataService.class);
         } catch (MetaFactoryException e) {
@@ -43,7 +43,7 @@ public class LocalizationBundleTranslationMafAction extends BaseToolsAction {
 
     @Override
     protected String getTitle() {
-        return "LocalizationBundleTranslation";
+        return "LocalizationBundleSpecificTranslation";
     }
 
     @Override

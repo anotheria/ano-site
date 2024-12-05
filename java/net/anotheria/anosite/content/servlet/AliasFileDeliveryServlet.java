@@ -2,11 +2,11 @@ package net.anotheria.anosite.content.servlet;
 
 import net.anotheria.anoprise.metafactory.MetaFactory;
 import net.anotheria.anoprise.metafactory.MetaFactoryException;
+import net.anotheria.anosite.content.servlet.resource.FileDeliveryServlet;
 import net.anotheria.anosite.gen.asresourcedata.data.Image;
 import net.anotheria.anosite.gen.asresourcedata.service.ASResourceDataServiceException;
 import net.anotheria.anosite.gen.asresourcedata.service.IASResourceDataService;
 import net.anotheria.util.StringUtils;
-import net.anotheria.webutils.filehandling.servlet.FileDeliveryServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
