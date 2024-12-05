@@ -13,9 +13,6 @@ import net.anotheria.maf.action.ActionMapping;
  */
 public class GetFileAction extends BaseFileHandlingAction {
 
-	/* (non-Javadoc)
-	 * @see net.anotheria.webutils.actions.BaseAction#doExecute(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
 	public ActionCommand execute(ActionMapping mapping, HttpServletRequest req, HttpServletResponse res) throws Exception {
 
 		String name = getStringParameter(req, "pName");
