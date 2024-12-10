@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -111,7 +112,8 @@ public class LocalizationBundleTranslationServlet extends HttpServlet {
                     List<String> contentLines = Arrays.asList(content.trim().split("\n"));
                     int chunkSize = 10;
                     int maxPages = contentLines.size() / chunkSize;
-                    List<String> translatedVector = new Vector<>();
+
+                    Map<Integer, String> translatedPages = new ConcurrentHashMap<>();
 
                     CountDownLatch countDownLatch = new CountDownLatch(maxPages + 1);
 
@@ -134,7 +136,7 @@ public class LocalizationBundleTranslationServlet extends HttpServlet {
                                 contentToTranslate.append(s).append("\n");
                             }
                             String translatedTemp = translationService.translate(finalLanguageFrom, finalLanguageTo, contentToTranslate.toString());
-                            translatedVector.add(translatedTemp);
+                            translatedPages.put(finalI, translatedTemp);
                             countDownLatch.countDown();
                         };
 
@@ -143,10 +145,13 @@ public class LocalizationBundleTranslationServlet extends HttpServlet {
 
                     countDownLatch.await();
 
-                    for (String s : translatedVector) {
-                        String[] translatedLines = s.split("\n");
-                        for (String line : translatedLines) {
-                            translated.append(line).append("\n");
+                    for(int i = 0; i <= maxPages; i++) {
+                        String translatedValue = translatedPages.get(i);
+                        if (!StringUtils.isEmpty(translatedValue)) {
+                            String[] translatedLines = translatedValue.split("\n");
+                            for (String line : translatedLines) {
+                                translated.append(line).append("\n");
+                            }
                         }
                     }
 

@@ -93,13 +93,13 @@ import net.anotheria.asg.exception.ASGRuntimeException;
 import net.anotheria.moskito.core.blueprint.BlueprintCallExecutor;
 import net.anotheria.moskito.core.blueprint.BlueprintProducer;
 import net.anotheria.moskito.core.blueprint.BlueprintProducersFactory;
+import net.anotheria.moskito.webui.util.VersionUtil;
 import net.anotheria.util.IdCodeGenerator;
 import net.anotheria.util.StringUtils;
 import net.anotheria.util.concurrency.IdBasedLock;
 import net.anotheria.util.concurrency.IdBasedLockManager;
 import net.anotheria.util.concurrency.SafeIdBasedLockManager;
 import net.anotheria.util.maven.MavenVersion;
-import net.anotheria.webutils.util.VersionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MarkerFactory;
@@ -1992,6 +1992,7 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 
 		try {
 			Site site = siteDataService.getSite(template.getSite());
+			ret.setName(site.getName());
 			ret.setSubtitle(site.getSubtitle());
 			ret.setTitle(site.getTitle());
 			ret.setKeywords(VariablesUtility.replaceVariables(req, site.getKeywords()));

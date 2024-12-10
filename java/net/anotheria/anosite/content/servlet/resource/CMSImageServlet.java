@@ -55,6 +55,4 @@ public class CMSImageServlet extends ResourceServlet {
 		}
 
 	}
-
-
 }

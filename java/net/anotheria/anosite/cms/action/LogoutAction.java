@@ -2,13 +2,12 @@ package net.anotheria.anosite.cms.action;
 
 import net.anotheria.maf.action.ActionCommand;
 import net.anotheria.maf.action.ActionMapping;
-import net.anotheria.webutils.actions.AccessControlMafAction;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 
-public class LogoutAction extends AccessControlMafAction {
+public class LogoutAction extends AccessControlAction {
 
     @Override
     public ActionCommand execute(ActionMapping mapping, HttpServletRequest req, HttpServletResponse res) throws Exception {

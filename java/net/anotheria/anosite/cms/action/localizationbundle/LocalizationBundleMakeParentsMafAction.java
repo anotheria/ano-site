@@ -1,4 +1,4 @@
-package net.anotheria.anosite.cms.action;
+package net.anotheria.anosite.cms.action.localizationbundle;
 
 import net.anotheria.anoprise.metafactory.MetaFactory;
 import net.anotheria.anoprise.metafactory.MetaFactoryException;

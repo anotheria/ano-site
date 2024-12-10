@@ -5,6 +5,10 @@ package net.anotheria.anosite.content.bean;
  */
 public class SiteBean {
 	/**
+	 * Site name.
+	 */
+	private String name;
+	/**
 	 * Site title (html-head).
 	 */
 	private String title;
@@ -37,7 +41,15 @@ public class SiteBean {
      * Sitebean - Site logo. Path to logo - itself.
      */
     private String logo;
-	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getSubtitle() {
 		return subtitle;
 	}

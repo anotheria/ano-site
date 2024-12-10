@@ -16,6 +16,7 @@ import net.anotheria.anosite.gen.asfeature.service.ASFeatureServiceException;
 import net.anotheria.anosite.gen.asfeature.service.IASFeatureService;
 import net.anotheria.anosite.guard.ConditionalGuard;
 import net.anotheria.anosite.guard.GuardFactory;
+import net.anotheria.asg.data.DataObject;
 import org.configureme.ConfigurationManager;
 import org.configureme.Environment;
 import org.configureme.GlobalEnvironment;
@@ -68,7 +69,7 @@ public class FeatureAPIImpl extends AbstractAPIImpl implements FeatureAPI {
 				log.warn("Feature " + f.getName() + " is being used, though it is marked as 'OBSOLETE'");
 			}
 
-			return processByGuards(f.getGuards(), "Feature: " + name);
+			return processByGuards(f, f.getGuards(), "Feature: " + name);
 		}catch(ASFeatureServiceException e){
 			log.warn("Feature " + name + " not found, due ", e);
 			return false;
@@ -120,14 +121,14 @@ public class FeatureAPIImpl extends AbstractAPIImpl implements FeatureAPI {
 					}
 				}
 			}
-			return isValidateByBrand && processByGuards(brandFeature.getGuards(), "Brand feature: " + name);
+			return isValidateByBrand && processByGuards(brandFeature, brandFeature.getGuards(), "Brand feature: " + name);
 		} catch (ASFeatureServiceException e) {
 			log.warn("Brand feature " + name + " not found, due ", e);
 			return false;
 		}
 	}
 
-	private boolean processByGuards(List<String> gIds, String featureDataStr) {
+	private boolean processByGuards(DataObject object, List<String> gIds, String featureDataStr) {
 		if (gIds==null || gIds.size()==0)
 			return true;
 
@@ -135,7 +136,7 @@ public class FeatureAPIImpl extends AbstractAPIImpl implements FeatureAPI {
 			ConditionalGuard g = null;
 			try {
 				g = GuardFactory.getConditionalGuard(gid);
-				if (!g.isConditionFullfilled(null, null)) {
+				if (!g.isConditionFullfilled(object, null)) {
 					return false;
 				}
 

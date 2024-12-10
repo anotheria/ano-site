@@ -3,7 +3,6 @@ package net.anotheria.anosite.cms.action;
 import net.anotheria.anosite.cms.user.CMSUserManager;
 import net.anotheria.maf.action.ActionCommand;
 import net.anotheria.maf.action.ActionMapping;
-import net.anotheria.webutils.actions.BaseAction;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

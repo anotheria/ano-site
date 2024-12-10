@@ -3,7 +3,6 @@ package net.anotheria.anosite.cms.action;
 import net.anotheria.anosite.cms.user.CMSUserManager;
 import net.anotheria.maf.action.ActionCommand;
 import net.anotheria.maf.action.ActionMapping;
-import net.anotheria.webutils.actions.AccessControlMafAction;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @see LogoutAction
  * @see ChangePassAction
  */
-public class LoginAction extends AccessControlMafAction {
+public class LoginAction extends AccessControlAction {
 
     public static final String P_USER_LOGIN = "pUserLogin";
     public static final String P_PASSWORD = "pPassword";
