@@ -2,19 +2,18 @@
 	<parent>
 		<groupId>net.anotheria</groupId>
 		<artifactId>ano-doc-parent</artifactId>
-		<version>4.2.1-SNAPSHOT</version>
+		<version>4.2.2-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>ano-site</artifactId>
-    <version>4.2.1-SNAPSHOT</version>
+    <version>4.2.2-SNAPSHOT</version>
 	<name>anotheria.net site engine</name>
 
 	<properties>
-		<ano-doc.version>4.2.1-SNAPSHOT</ano-doc.version>
+		<ano-doc.version>4.2.2-SNAPSHOT</ano-doc.version>
 		<ano-util.version>4.0.0</ano-util.version>
 		<ano-tags.version>4.0.0</ano-tags.version>
-		<ano-web.version>4.0.1-SNAPSHOT</ano-web.version>
 		<ano-maf.version>4.0.0</ano-maf.version>
 		<ano-prise.version>4.0.0</ano-prise.version>
 		<ano-plass.version>4.0.0</ano-plass.version>
@@ -76,11 +75,11 @@
 			<artifactId>commons-text</artifactId>
 			<version>1.10.0</version>
 		</dependency>
-		<dependency>
-			<groupId>net.anotheria</groupId>
-			<artifactId>ano-doc</artifactId>
-			<version>${ano-doc.version}</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>net.anotheria</groupId>-->
+<!--			<artifactId>ano-doc</artifactId>-->
+<!--			<version>${ano-doc.version}</version>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>net.anotheria</groupId>
 			<artifactId>ano-util</artifactId>
@@ -90,11 +89,6 @@
 			<groupId>net.anotheria</groupId>
 			<artifactId>ano-tags</artifactId>
 			<version>${ano-tags.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.anotheria</groupId>
-			<artifactId>ano-web</artifactId>
-			<version>${ano-web.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.anotheria</groupId>

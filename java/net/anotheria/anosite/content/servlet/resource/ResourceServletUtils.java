@@ -1,7 +1,7 @@
 package net.anotheria.anosite.content.servlet.resource;
 
+import net.anotheria.asg.util.filestorage.TemporaryFileHolder;
 import net.anotheria.util.IOUtils;
-import net.anotheria.webutils.filehandling.beans.TemporaryFileHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import java.util.Date;
  *
  * @author h3ll
  */
-final class ResourceServletUtils {
+public final class ResourceServletUtils {
 
 	/**
 	 * {@link Logger} instance.

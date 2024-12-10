@@ -1,12 +1,12 @@
 package net.anotheria.anosite.bredcrambs.action;
 
 import net.anotheria.anosite.bredcrambs.data.DocumentEnum;
+import net.anotheria.anosite.cms.action.BaseAction;
 import net.anotheria.asg.exception.ConstantNotFoundException;
 import net.anotheria.maf.action.ActionCommand;
 import net.anotheria.maf.action.ActionMapping;
 import net.anotheria.maf.json.JSONResponse;
 import net.anotheria.util.StringUtils;
-import net.anotheria.webutils.actions.BaseAction;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;

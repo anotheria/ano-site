@@ -10,7 +10,6 @@ import net.anotheria.maf.action.ActionCommand;
 import net.anotheria.maf.action.ActionMapping;
 import net.anotheria.maf.json.JSONResponse;
 import net.anotheria.util.StringUtils;
-import net.anotheria.webutils.actions.BaseAction;
 import org.json.JSONException;
 import org.json.JSONObject;
 
