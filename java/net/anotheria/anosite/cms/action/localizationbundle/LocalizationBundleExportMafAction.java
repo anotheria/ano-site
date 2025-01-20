@@ -19,6 +19,7 @@ public class LocalizationBundleExportMafAction extends BaseToolsAction {
     public ActionCommand anoDocExecute(ActionMapping aMapping, HttpServletRequest aReq, HttpServletResponse aRes) throws Exception {
         aReq.setAttribute("languages", getSupportedLanguages());
         aReq.setAttribute("selectedLanguage", "AT");
+        System.out.println("LocalizationBundleExportMafAction.anoDocExecute");
         return aMapping.success();
     }
 

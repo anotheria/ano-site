@@ -15,7 +15,7 @@
     <link href="/cms_static/css/newadmin.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<jsp:include page="MenuMaf.jsp" flush="true"/>
+<jsp:include page="../../../gen/shared/jsp/MenuMaf.jsp" flush="true"/>
 <div class="right">
     <div class="r_w">
         <div class="main_area">
