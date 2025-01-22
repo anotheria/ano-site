@@ -53,9 +53,6 @@ import net.anotheria.anosite.gen.aswebdata.data.Pagex;
 import net.anotheria.anosite.gen.aswebdata.data.PagexDocument;
 import net.anotheria.anosite.gen.aswebdata.service.ASWebDataServiceException;
 import net.anotheria.anosite.gen.aswebdata.service.IASWebDataService;
-import net.anotheria.anosite.gen.aswizarddata.data.WizardDef;
-import net.anotheria.anosite.gen.aswizarddata.service.ASWizardDataServiceException;
-import net.anotheria.anosite.gen.aswizarddata.service.IASWizardDataService;
 import net.anotheria.anosite.gen.shared.data.LinkTypesUtils;
 import net.anotheria.anosite.gen.shared.data.MediaDescUtils;
 import net.anotheria.anosite.guard.ConditionalGuard;
@@ -76,19 +73,6 @@ import net.anotheria.anosite.shared.AnositeConfig;
 import net.anotheria.anosite.shared.InternalResponseCode;
 import net.anotheria.anosite.shared.presentation.servlet.BaseAnoSiteServlet;
 import net.anotheria.anosite.util.AnositeConstants;
-import net.anotheria.anosite.wizard.api.WizardAPI;
-import net.anotheria.anosite.wizard.api.exception.WizardAPIException;
-import net.anotheria.anosite.wizard.handler.WizardHandler;
-import net.anotheria.anosite.wizard.handler.WizardHandlerFactory;
-import net.anotheria.anosite.wizard.handler.exceptions.WizardHandlerException;
-import net.anotheria.anosite.wizard.handler.exceptions.WizardHandlerProcessException;
-import net.anotheria.anosite.wizard.handler.exceptions.WizardHandlerSubmitException;
-import net.anotheria.anosite.wizard.handler.response.WizardHandlerResponse;
-import net.anotheria.anosite.wizard.handler.response.WizardResponseAbort;
-import net.anotheria.anosite.wizard.handler.response.WizardResponseCancel;
-import net.anotheria.anosite.wizard.handler.response.WizardResponseChangeStep;
-import net.anotheria.anosite.wizard.handler.response.WizardResponseContinue;
-import net.anotheria.anosite.wizard.handler.response.WizardResponseFinish;
 import net.anotheria.asg.exception.ASGRuntimeException;
 import net.anotheria.moskito.core.blueprint.BlueprintCallExecutor;
 import net.anotheria.moskito.core.blueprint.BlueprintProducer;
@@ -96,9 +80,6 @@ import net.anotheria.moskito.core.blueprint.BlueprintProducersFactory;
 import net.anotheria.moskito.webui.util.VersionUtil;
 import net.anotheria.util.IdCodeGenerator;
 import net.anotheria.util.StringUtils;
-import net.anotheria.util.concurrency.IdBasedLock;
-import net.anotheria.util.concurrency.IdBasedLockManager;
-import net.anotheria.util.concurrency.SafeIdBasedLockManager;
 import net.anotheria.util.maven.MavenVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,7 +118,7 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 	/**
 	 * {@link Logger} instance.
 	 */
-	private static Logger LOGGER = LoggerFactory.getLogger(ContentPageServlet.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContentPageServlet.class);
 
 	/**
 	 * Basic, serialVersionUID.
@@ -169,10 +150,6 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 	 * HTML suffix.
 	 */
 	private static final String HTML_SUFFIX = ".html";
-	/**
-	 * Wizard suffix.
-	 */
-	private static final String W_HTML_SUFFIX = ".whtml";
 
 	/**
 	 * WebDataService for boxes and pages.
@@ -201,18 +178,10 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 	private transient IASFeatureService featureService;
 
 	/**
-	 * Wizard service.
-	 */
-	private transient IASWizardDataService wizardDataService;
-	/**
 	 * {@link IASBrandService} instance.
 	 */
 	private transient IASBrandService brandService;
 
-	/**
-	 * WizardAPI instance.
-	 */
-	private transient WizardAPI wizardAPI;
 	/**
 	 * BlueprintCallExecutor pageExecutor, for creating and handling Pages with built In moskito stats.
 	 */
@@ -223,10 +192,6 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 	private transient BlueprintCallExecutor boxExecutor;
 
 	/**
-	 * BlueprintCallExecutor wizardExecutor.
-	 */
-	private transient BlueprintCallExecutor wizardExecutor;
-	/**
 	 * Configuration instance.
 	 */
 	private AnositeConfig config = AnositeConfig.getInstance();
@@ -234,11 +199,7 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 	 * {@link SimpleDateFormat}.
 	 */
 	private static SimpleDateFormat generatedFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
-	/**
-	 * {@link IdBasedLockManager} instance.
-	 */
-	private transient IdBasedLockManager lockManager;
-	
+
 	/**
 	 * {@link AnoSiteAccessAPI} instance.
 	 */
@@ -263,10 +224,8 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 			federatedDataService = MetaFactory.get(IASFederatedDataService.class);
 			layoutDataService = MetaFactory.get(IASLayoutDataService.class);
 			resourceDataService = MetaFactory.get(IASResourceDataService.class);
-			wizardDataService = MetaFactory.get(IASWizardDataService.class);
 			featureService    = MetaFactory.get(IASFeatureService.class);
 			brandService = MetaFactory.get(IASBrandService.class);
-			wizardAPI = APIFinder.findAPI(WizardAPI.class);
 			accessAPI = APIFinder.findAPI(AnoSiteAccessAPI.class);
 			systemConfigurationAPI = APIFinder.findAPI(SystemConfigurationAPI.class);
 		} catch (MetaFactoryException e) {
@@ -275,7 +234,6 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 		}
 		pageExecutor = new PageBeanCreator();
 		boxExecutor = new BoxBeanCreator();
-		wizardExecutor = new WizardExecutor();
 		config.getServletContext().setAttribute(AnositeConstants.AA_ANOSITE_RANDOM, IdCodeGenerator.generateCode(10));
 
         page404 = config.getInitParameter("page404");
@@ -286,8 +244,6 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
         if (StringUtils.isEmpty(page500)) {
             page500 = "500.html";
         }
-        //Lock!
-        lockManager = new SafeIdBasedLockManager();
     }
 
 	@Override
@@ -300,9 +256,6 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 		} catch (BoxHandleException e) {
 			LOGGER.error("moskitoDoGet", e);
 			throw new ServletException("Box Handle Exception: " + e.getMessage());
-		} catch (WizardHandlerException e) {
-			LOGGER.error("moskitoDoPost", e);
-			throw new ServletException("Wizard Handle Exception: " + e.getMessage());
 		}
 	}
 
@@ -316,16 +269,10 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 		} catch (BoxHandleException e) {
 			LOGGER.error("moskitoDoPost", e);
 			throw new ServletException("Box Handle Exception: " + e.getMessage());
-		} catch (WizardHandlerException e) {
-			LOGGER.error("moskitoDoPost", e);
-			throw new ServletException("Wizard Handle Exception: " + e.getMessage());
 		}
 	}
 
 	/**
-	 * If we working with wizards - we Should obtain IDBased lock - before processing (to avoid double submits, etc).
-	 * In other  case  - lock - won't be obtained.
-	 * TODO : it's actually temp solution which will be removed!
 	 *
 	 * @param req	{@link HttpServletRequest}
 	 * @param res	{@link HttpServletResponse}
@@ -335,26 +282,11 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 	 * @throws ASGRuntimeException on backend failures
 	 * @throws net.anotheria.anosite.handler.exception.BoxHandleException
 	 *                             on box handle errors
-	 * @throws net.anotheria.anosite.wizard.handler.exceptions.WizardHandlerException
-	 *                             on wizard handle errors
 	 */
 	private void process(HttpServletRequest req, HttpServletResponse res, boolean submit) throws ServletException, IOException, ASGRuntimeException,
-			BoxHandleException, WizardHandlerException {
+			BoxHandleException {
 
-		IdBasedLock lock = null;
-		try {
-			boolean isWizardRequest = isRequestToResource(req, W_HTML_SUFFIX);
-			if (isWizardRequest) {
-				String sId = APICallContext.getCallContext().getCurrentSession().getId();
-				final String lockId = extractPageName(req) + "_" + sId;
-				lock = lockManager.obtainLock(lockId);
-				lock.lock();
-			}
-			processRequest(req, res, submit);
-		} finally {
-			if (lock != null)
-				lock.unlock();
-		}
+		processRequest(req, res, submit);
 	}
 
 	/**
@@ -368,18 +300,16 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 	 * @throws ASGRuntimeException on backend failures
 	 * @throws net.anotheria.anosite.handler.exception.BoxHandleException
 	 *                             on box handle errors
-	 * @throws net.anotheria.anosite.wizard.handler.exceptions.WizardHandlerException
-	 *                             on wizard handle errors
 	 */
 
-	protected void processRequest(HttpServletRequest req, HttpServletResponse res, boolean submit) throws ServletException, IOException, ASGRuntimeException, BoxHandleException, WizardHandlerException {
+	protected void processRequest(HttpServletRequest req, HttpServletResponse res, boolean submit) throws ServletException, IOException, ASGRuntimeException, BoxHandleException {
 
 		prepareTextResources(req);
 		req.setAttribute(BEAN_ANOSITE_VERBOSITY, config.verbose() ? Boolean.TRUE : Boolean.FALSE);
 
 		String requestURI = req.getRequestURI();
 		String queryString = req.getQueryString();
-		if (queryString == null || queryString.length() == 0)
+		if (queryString == null || queryString.isEmpty())
 			requestURI += "?dummy=dummy";
 		else
 			requestURI += "?" + queryString;
@@ -397,33 +327,9 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 		//checking if HTML suffix present
 		boolean isPageRequest = isRequestToResource(req, HTML_SUFFIX);
 
-		//checking if .whtml suffix present
-		boolean isWizardRequest = isRequestToResource(req, W_HTML_SUFFIX);
 
 		//initing Pagex if request was to it (trying to resolve page even if .html suffix not present)
-		Pagex page = isPageRequest || !isWizardRequest ? resolvePageByName(pageName) : null;
-		//initing wizard if request was not to page
-		WizardDef wizard = page == null && isWizardRequest ? getWizardByName(pageName) : null;
-
-		boolean handleWizard = wizard != null;
-
-		//wizard initialization.
-		if (page == null && handleWizard) {
-			try {
-				//looking for wizard current page id!
-				//if first call - first wizard page will be used
-				String wizardPageId = wizardAPI.getCurrentStepPageId(wizard.getId());
-				try {
-					if (!StringUtils.isEmpty(wizardPageId))
-						page = webDataService.getPagex(wizardPageId);
-				} catch (ASWebDataServiceException e) {
-					LOGGER.trace("ignore", e);
-				}
-			} catch (WizardAPIException e) {
-				LOGGER.trace("ignore", e);
-			}
-
-		}
+		Pagex page = isPageRequest ? resolvePageByName(pageName) : null;
 
 
 		if (page == null) {
@@ -440,14 +346,6 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 			return;
 		}
 
-		if (wizard == null) {
-			wizard = getCurrentPageWizard(page);
-			//found case
-			if (wizard != null) {
-				res.sendRedirect(req.getContextPath() + "/" + wizard.getName() + W_HTML_SUFFIX);
-				return;
-			}
-		}
 
         //set page name to session.
         if (page != null) {
@@ -530,25 +428,10 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 					return;
 				// /// Box submit End
 
-				// wizard submit part
-				if (handleWizard) {
-					// checking access
-					if (!accessAPI.isAllowedForWizard(wizard.getId())) {
-						res.sendRedirect(req.getContextPath() + "/" + "403.html");
-						return;
-					}
-
-					response = processSubmitWizard(req, res, wizard);
-					if (response.getCode() == InternalResponseCode.CONTINUE_AND_REDIRECT) {
-						res.sendRedirect(InternalRedirectResponse.class.cast(response).getUrl());
-						return;
-					}
-				}
 
 				// TODO any further actions needed?
 				if (!response.canContinue())
 					return;
-				// wizard submit part
 			}
 		} catch (AnoSiteAccessAPIException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -556,33 +439,6 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 		}
 
 		//ok, if we got sofar, we have at least continue and error or continue responses.
-
-		//wizard create!
-		if (handleWizard) {
-			//////////////Wizard start //////////////
-			try {
-				// checking access
-				if (!accessAPI.isAllowedForWizard(wizard.getId())) {
-					res.sendRedirect(req.getContextPath() + "/" + "403.html");
-					return;
-				}
-				
-				BlueprintProducer wizardProducer = BlueprintProducersFactory.getBlueprintProducer("Wizard-" + wizard.getId() + "-" + wizard.getName(), "wizard",
-						AnositeConstants.AS_MOSKITO_SUBSYSTEM);
-				InternalResponse wizardResponse = InternalResponse.class.cast(wizardProducer.execute(wizardExecutor, req, res, wizard));
-				if (wizardResponse.getCode() == InternalResponseCode.ABORT) {
-					res.sendRedirect(req.getContextPath() + "/" + page500);
-				}
-
-				if (!wizardResponse.canContinue()) {
-					LOGGER.debug("Wizard " + wizard + " response can't continue");
-					return;
-				}
-			} catch (Exception e) {
-				LOGGER.error("Could not handle WizardDef with ID: " + wizard.getId(), e);
-				throw new ASGRuntimeException("Could not create WizardBean for WizardDef with ID:" + wizard.getId() + ": " + e.getMessage() + "! See logs for more details.");
-			}
-		}   //////////////Wizard end //////////////
 
 
 		//set the proper stylesheet
@@ -707,102 +563,6 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 		return defaultValue;
 	}
 
-	/**
-	 * Returns {@link WizardDef} to which current{@link Pagex} belongs, if such exist.
-	 * Otherwise null.
-	 * Means that current page can be step of some withard - in this case withard will be returned.
-	 *
-	 * @param page {@link Pagex}
-	 * @return {@link WizardDef}
-	 */
-	private WizardDef getCurrentPageWizard(Pagex page) {
-		try {
-			List<WizardDef> wizards = wizardDataService.getWizardDefs();
-			for (WizardDef wiz : wizards) {
-				for (String pageId : wiz.getWizardSteps())
-					if (page.getId().equals(pageId))
-						return wiz;
-			}
-		} catch (ASWizardDataServiceException e) {
-			LOGGER.trace("ignored", e);
-		}
-		return null;
-	}
-
-
-	/**
-	 * Process submit for Wizard.
-	 *
-	 * @param req	{@link HttpServletRequest}
-	 * @param res	{@link HttpServletResponse}
-	 * @param wizard {@link WizardDef}
-	 * @return {@link InternalResponse}
-	 * @throws WizardHandlerSubmitException on submit errors
-	 */
-	private InternalResponse processSubmitWizard(HttpServletRequest req, HttpServletResponse res, WizardDef wizard) throws WizardHandlerSubmitException {
-		WizardHandler handler = WizardHandlerFactory.createHandler(wizard.getHandler());
-
-		WizardHandlerResponse response = handler.submit(req, res, wizard);
-		switch (response.getResponseCode()) {
-			case CONTINUE:
-				return new InternalResponseContinue();
-			case CONTINUE_AND_REDIRECT:
-				if (response instanceof WizardResponseFinish)
-					return new InternalRedirectResponse(WizardResponseFinish.class.cast(response).getRedirectUrl());
-				if (response instanceof WizardResponseChangeStep) {
-					//redirect to self!
-					return new InternalRedirectResponse(req.getContextPath() + req.getRequestURI());
-				}
-				LOGGER.warn("wizard  " + wizard + " trying to rewrite redirect, denied");
-				return new InternalResponseContinue();
-			case CANCEL_AND_REDIRECT:
-				if (response instanceof WizardResponseCancel)
-					try {
-						res.sendRedirect(WizardResponseCancel.class.cast(response).getRedirectUrl());
-					} catch (IOException e) {
-						LOGGER.error("Redirect failed, target: ", e);
-					}
-				//abort execution
-				return new InternalResponse(InternalResponseCode.STOP);
-			case STOP:
-				return new InternalResponse(InternalResponseCode.STOP);
-			case ABORT:
-				if (response instanceof WizardResponseAbort) {
-					WizardResponseAbort abort = WizardResponseAbort.class.cast(response);
-					@SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
-					Exception cause = abort != null ? abort.getCause() : null;
-					String message = abort != null ? abort.getCauseMessage() : null;
-					throw new WizardHandlerSubmitException("Execution aborted " + message != null ? message : "", cause != null ? cause : new RuntimeException("No Exception " +
-							"given"));
-				}
-
-				throw new RuntimeException("Execution aborted: " + response);
-			default:
-				throw new AssertionError("Unexpected case in response: " + response.getResponseCode());
-		}
-
-	}
-
-	/**
-	 * Trying to find wizard with selected name. If not found null will be returned.
-	 *
-	 * @param wizardName name itself
-	 * @return {@link WizardDef}
-	 */
-	private WizardDef getWizardByName(String wizardName) {
-		try {
-			List<WizardDef> wizards = wizardDataService.getWizardDefsByProperty(WizardDef.PROP_NAME, wizardName);
-			if (wizards == null || wizards.isEmpty()) {
-				LOGGER.debug("Withards are not  configured!");
-				return null;
-			}
-
-			return wizards.get(0);
-		} catch (ASWizardDataServiceException e) {
-			LOGGER.trace(e.getMessage(), e);
-			return null;
-		}
-	}
 
 	/**
 	 * Setting error CODE.
@@ -1551,92 +1311,6 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 		return current;
 	}
 
-	/**
-	 * Create wizard method.
-	 *
-	 * @param req	{@link HttpServletRequest}
-	 * @param res	{@link HttpServletResponse}
-	 * @param wizard {@link WizardDef}
-	 * @return {@link InternalResponse}
-	 * @throws WizardHandlerProcessException on errors
-	 */
-	private InternalResponse handleWizardProcess(HttpServletRequest req, HttpServletResponse res, WizardDef wizard) throws WizardHandlerException {
-		WizardHandler handler = WizardHandlerFactory.createHandler(wizard.getHandler());
-
-		//first execute pre-process
-		WizardHandlerResponse response = handler.preProcess(req, res, wizard);
-		response = response == null ? WizardResponseContinue.INSTANCE : response;
-		InternalResponse result = handleWizardProcessResponse(req, res, wizard, response);
-		if (!result.canContinue()) {
-			LOGGER.debug("wizard pre-process :  RESPONSE can't continue. Process won't be executed");
-			return result;
-		}
-		//execute process
-		response = handler.process(req, res, wizard);
-		response = response == null ? WizardResponseContinue.INSTANCE : response;
-		return handleWizardProcessResponse(req, res, wizard, response);
-	}
-
-	/**
-	 * Handle response of wizard pre-process and process.
-	 *
-	 * @param req	  {@link HttpServletRequest}
-	 * @param res	  {@link HttpServletResponse}
-	 * @param wizard   {@link WizardDef}
-	 * @param response {@link WizardHandlerResponse}
-	 * @return {@link InternalResponse} as processed response
-	 * @throws WizardHandlerProcessException on errors
-	 */
-	private InternalResponse handleWizardProcessResponse(HttpServletRequest req, HttpServletResponse res, WizardDef wizard, WizardHandlerResponse response) throws WizardHandlerException {
-		switch (response.getResponseCode()) {
-			case ERROR_AND_CONTINUE://TODO make an error bean later (same as for BOX - create)
-				return new InternalResponseContinue();
-			case CONTINUE:
-				return new InternalResponseContinue();
-			case CONTINUE_AND_REDIRECT:
-				if (response instanceof WizardResponseFinish)
-					return new InternalRedirectResponse(WizardResponseFinish.class.cast(response).getRedirectUrl());
-				// WizardResponseChangeStep on process means  that we should not Continue rendering
-				if (response instanceof WizardResponseChangeStep) {
-					try {
-						//redirect to self! immediately!!!!
-						res.sendRedirect(req.getContextPath() + req.getRequestURI());
-					} catch (IOException e) {
-						LOGGER.error("Redirect failed, target: ", e);
-					}
-					//abort execution
-					return new InternalResponse(InternalResponseCode.STOP);
-				}
-				LOGGER.warn("wizard  " + wizard + " trying to rewrite redirect, denied");
-				return new InternalResponseContinue();
-			case CANCEL_AND_REDIRECT:
-				if (response instanceof WizardResponseCancel)
-					try {
-						res.sendRedirect(WizardResponseCancel.class.cast(response).getRedirectUrl());
-					} catch (IOException e) {
-						LOGGER.error("Redirect failed, target: ", e);
-					}
-				//abort execution
-				return new InternalResponse(InternalResponseCode.STOP);
-			case STOP:
-				return new InternalResponse(InternalResponseCode.STOP);
-			case ABORT:
-				if (response instanceof WizardResponseAbort) {
-					WizardResponseAbort abort = WizardResponseAbort.class.cast(response);
-					@SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
-					Exception cause = abort != null ? abort.getCause() : null;
-					String message = abort != null ? abort.getCauseMessage() : null;
-					LOGGER.error("Could not create wizardBean for wizard{" + wizard.getId() + "}" + message != null ? message : "", cause);
-					throw new WizardHandlerException("Execution aborted " + message != null ? message : "", cause != null ? cause : new RuntimeException("No Exception " +
-							"given"));
-				}
-
-				throw new RuntimeException("Execution aborted: " + response);
-			default:
-				throw new AssertionError("Unexpected case in response: " + response.getResponseCode());
-		}
-	}
-
 
 	/**
 	 * Creates the page bean which represents part of current page for rendering.
@@ -2202,22 +1876,6 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 					(Box) parameters[2]
 			);
 		}
-	}
-
-	/**
-	 * WizardExecutor as BlueprintCallExecutor.
-	 * Actually executes handleWizardProcess on process request.
-	 */
-	class WizardExecutor implements BlueprintCallExecutor {
-		@Override
-		public Object execute(Object... parameters) throws Exception {
-			return handleWizardProcess(
-					HttpServletRequest.class.cast(parameters[0]),
-					HttpServletResponse.class.cast(parameters[1]),
-					WizardDef.class.cast(parameters[2]));
-		}
-
-
 	}
 
 	/**
