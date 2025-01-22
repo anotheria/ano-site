@@ -6,7 +6,6 @@
     <!--@include:as-datadef-content.xml -->
     <!--@include:as-datadef-resources.xml -->
     <!--@include:as-datadef-action.xml -->
-    <!--@include:as-datadef-wizard.xml -->
 	<!--@include:as-datadef-user.xml -->
     <!--@include:as-datadef-ano-access-configuration.xml -->
     <!--@include:as-datadef-ano-access-application-data.xml -->
