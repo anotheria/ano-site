@@ -46,9 +46,6 @@ import net.anotheria.anosite.gen.aswebdata.data.Box;
 import net.anotheria.anosite.gen.aswebdata.data.Pagex;
 import net.anotheria.anosite.gen.aswebdata.service.ASWebDataServiceException;
 import net.anotheria.anosite.gen.aswebdata.service.IASWebDataService;
-import net.anotheria.anosite.gen.aswizarddata.data.WizardDef;
-import net.anotheria.anosite.gen.aswizarddata.service.ASWizardDataServiceException;
-import net.anotheria.anosite.gen.aswizarddata.service.IASWizardDataService;
 import net.anotheria.asg.data.DataObject;
 import net.anotheria.asg.util.listener.IServiceListener;
 import net.anotheria.util.StringUtils;
@@ -108,11 +105,6 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 	private IASCustomActionService customActionsConfigurationPersistence;
 
 	/**
-	 * Wizards configuration.
-	 */
-	private IASWizardDataService wizardConfigurationPersistence;
-
-	/**
 	 * User data service.
 	 * */
 	private IASUserDataService userDataService;
@@ -136,7 +128,6 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 			pagesConfigurationPersistence = MetaFactory.get(IASWebDataService.class);
 			siteDataService = MetaFactory.get(IASSiteDataService.class);
 			customActionsConfigurationPersistence = MetaFactory.get(IASCustomActionService.class);
-			wizardConfigurationPersistence = MetaFactory.get(IASWizardDataService.class);
 			userDataService = MetaFactory.get(IASUserDataService.class);
 			securityBoxPersistenceService = MetaFactory.get(SecurityBoxPersistenceService.class);
 		} catch (MetaFactoryException e) {
@@ -218,21 +209,6 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 			return isAllowed(action.getAccessOperation());
 		} catch (ASCustomActionServiceException e) {
 			String message = LogMessageUtil.failMsg(e, actionId);
-			LOGGER.error(message, e);
-			throw new AnoSiteAccessAPIException(message, e);
-		}
-	}
-
-	@Override
-	public boolean isAllowedForWizard(final String wizardId) throws AnoSiteAccessAPIException {
-		if (!AnoSiteAccessAPIConfig.getInstance().isEnabled()) // allowing access if access control disabled by configuration
-			return true;
-
-		try {
-			WizardDef wizard = wizardConfigurationPersistence.getWizardDef(wizardId);
-			return isAllowed(wizard.getAccessOperation());
-		} catch (ASWizardDataServiceException e) {
-			String message = LogMessageUtil.failMsg(e, wizardId);
 			LOGGER.error(message, e);
 			throw new AnoSiteAccessAPIException(message, e);
 		}
