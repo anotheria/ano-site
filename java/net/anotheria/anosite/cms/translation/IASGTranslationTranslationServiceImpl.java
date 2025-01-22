@@ -7,6 +7,7 @@ import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
 import net.anotheria.anosite.config.LocalizationAutoTranslationTokenConfig;
 import net.anotheria.anosite.gen.shared.service.BasicService;
+import net.anotheria.asg.exception.ASGRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,5 +75,14 @@ public class IASGTranslationTranslationServiceImpl extends BasicService implemen
             instance = new IASGTranslationTranslationServiceImpl();
         }
         return instance;
+    }
+
+    /**
+     * This method doesn't make sense here, but it also doesn't make sense, that this service is extending BasicService.
+     * @param language
+     * @throws ASGRuntimeException
+     */
+    public void purgeLanguageFromAllObjects(String language) throws ASGRuntimeException {
+        throw( new AssertionError("Not implemented and shouldn't be called."));
     }
 }
