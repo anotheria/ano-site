@@ -72,11 +72,11 @@ public class LocalizationBundlesCompareServlet extends AbstractLocalizationParen
                         }
                     }
 
-                    for (String key : messagesKeys) {
+                    for (String messageKey : messagesKeys) {
                         StringBuilder firstMapDiffValues = new StringBuilder();
                         StringBuilder secondMapDiffValues = new StringBuilder();
-                        Map<String, String> firstMap = getKeyValuePairsMap(getLocalizationValuesByLocale(firstBundle, key));
-                        Map<String, String> secondMap = getKeyValuePairsMap(getLocalizationValuesByLocale(secondBundle, key));
+                        Map<String, String> firstMap = getKeyValuePairsMap(getLocalizationValuesByLocale(firstBundle, messageKey));
+                        Map<String, String> secondMap = getKeyValuePairsMap(getLocalizationValuesByLocale(secondBundle, messageKey));
 
                         Set<String> commonKeys = new HashSet<>();
                         commonKeys.addAll(firstMap.keySet());
@@ -93,7 +93,7 @@ public class LocalizationBundlesCompareServlet extends AbstractLocalizationParen
                         }
 
                         if (!firstMapDiffValues.isEmpty() || !secondMapDiffValues.isEmpty()) {
-                            result.append("==== ").append(language).append(" ====\n")
+                            result.append("==== ").append(messageKey).append(" ====\n")
                                     .append(firstBundle.getName()).append("[").append(firstBundleId).append("]\n").append(firstMapDiffValues).append("\n")
                                     .append(secondBundle.getName()).append("[").append(secondBundleId).append("]\n").append(secondMapDiffValues).append("\n");
                         }
