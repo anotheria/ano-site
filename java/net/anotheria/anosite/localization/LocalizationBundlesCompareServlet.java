@@ -9,6 +9,7 @@ import net.anotheria.anosite.gen.asresourcedata.data.LocalizationBundleDocument;
 import net.anotheria.anosite.gen.shared.service.AnositeLanguageUtils;
 import net.anotheria.maf.json.JSONResponse;
 import net.anotheria.util.StringUtils;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,15 +63,11 @@ public class LocalizationBundlesCompareServlet extends AbstractLocalizationParen
                 LocalizationBundleDocument secondBundle = (LocalizationBundleDocument) resourceDataService.getLocalizationBundle(secondBundleId);
 
                 if (firstBundle != null && secondBundle != null) {
+                    Set<String> firstBundleKeys = getMessageKeys(firstBundle.getKeys());
+                    Set<String> secondBundleKeys = getMessageKeys(secondBundle.getKeys());
 
-                    Enumeration<String> keys = firstBundle.getKeys();
-                    List<String> messagesKeys = new ArrayList<>();
-                    while (keys.hasMoreElements()) {
-                        String key = keys.nextElement();
-                        if (key.startsWith("messages")) {
-                            messagesKeys.add(key);
-                        }
-                    }
+                    Set<String> messagesKeys = new HashSet<>(firstBundleKeys);
+                    messagesKeys.retainAll(secondBundleKeys);
 
                     for (String messageKey : messagesKeys) {
                         StringBuilder firstMapDiffValues = new StringBuilder();
@@ -110,9 +107,28 @@ public class LocalizationBundlesCompareServlet extends AbstractLocalizationParen
         }
 
         if (isValid){
+
             String resultData = result.isEmpty() ? "Bundles are equal" : result.toString();
-            jsonResponse.addRawData("result", resultData);
+            JSONObject data = new JSONObject();
+            data.put("result", resultData);
+            jsonResponse.setData(data);
         }
         writeResponse(resp, jsonResponse.toJSON().toString());
+    }
+
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        super.doGet(request, response);
+    }
+
+    private Set<String> getMessageKeys(Enumeration<String> keys) {
+        Set<String> messagesKeys = new HashSet<>();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            if (key.startsWith("messages")) {
+                messagesKeys.add(key);
+            }
+        }
+        return messagesKeys;
     }
 }
