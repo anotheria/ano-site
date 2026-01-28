@@ -11,7 +11,10 @@ import net.anotheria.maf.json.JSONResponse;
 import net.anotheria.util.StringUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -59,11 +62,21 @@ public class LocalizationBundlesCompareServlet extends AbstractLocalizationParen
                 LocalizationBundleDocument secondBundle = (LocalizationBundleDocument) resourceDataService.getLocalizationBundle(secondBundleId);
 
                 if (firstBundle != null && secondBundle != null) {
-                    for (String language : AnositeLanguageUtils.getSupportedLanguages()) {
+
+                    Enumeration<String> keys = firstBundle.getKeys();
+                    List<String> messagesKeys = new ArrayList<>();
+                    while (keys.hasMoreElements()) {
+                        String key = keys.nextElement();
+                        if (key.startsWith("messages")) {
+                            messagesKeys.add(key);
+                        }
+                    }
+
+                    for (String key : messagesKeys) {
                         StringBuilder firstMapDiffValues = new StringBuilder();
                         StringBuilder secondMapDiffValues = new StringBuilder();
-                        Map<String, String> firstMap = getKeyValuePairsMap(getLocalizationValuesByLocale(firstBundle, "messages_" + language));
-                        Map<String, String> secondMap = getKeyValuePairsMap(getLocalizationValuesByLocale(secondBundle, "messages_" + language));
+                        Map<String, String> firstMap = getKeyValuePairsMap(getLocalizationValuesByLocale(firstBundle, key));
+                        Map<String, String> secondMap = getKeyValuePairsMap(getLocalizationValuesByLocale(secondBundle, key));
 
                         Set<String> commonKeys = new HashSet<>();
                         commonKeys.addAll(firstMap.keySet());
