@@ -2,7 +2,7 @@
 	<parent>
 		<groupId>net.anotheria</groupId>
 		<artifactId>ano-doc-parent</artifactId>
-		<version>4.3.2</version>
+		<version>4.3.3-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -11,7 +11,7 @@
 	<name>anotheria.net site engine</name>
 
 	<properties>
-		<ano-doc.version>4.3.2</ano-doc.version>
+		<ano-doc.version>4.3.3-SNAPSHOT</ano-doc.version>
 		<ano-util.version>4.0.0</ano-util.version>
 		<ano-tags.version>4.0.0</ano-tags.version>
 		<ano-maf.version>4.0.0</ano-maf.version>
@@ -240,8 +240,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.11.0</version>
 				<configuration>
-					<source>${source-version}</source>
-					<target>${target-version}</target>
+					<source>15</source>
+					<target>15</target>
 				</configuration>
 			</plugin>
 
