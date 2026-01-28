@@ -36,6 +36,7 @@ public class LocalizationBundlesCompareServlet extends AbstractLocalizationParen
 
         JSONResponse jsonResponse = new JSONResponse();
         StringBuilder result = new StringBuilder();
+        String basedName = "";
         String firstBundleId = req.getParameter("firstBundle");
         String secondBundleId = req.getParameter("secondBundle");
         boolean isValid = true;
@@ -61,6 +62,7 @@ public class LocalizationBundlesCompareServlet extends AbstractLocalizationParen
             if (isValid) {
                 LocalizationBundleDocument firstBundle = (LocalizationBundleDocument) resourceDataService.getLocalizationBundle(firstBundleId);
                 LocalizationBundleDocument secondBundle = (LocalizationBundleDocument) resourceDataService.getLocalizationBundle(secondBundleId);
+                basedName = firstBundle.getName() + "[" + firstBundleId + "] -> " + secondBundle.getName() + "[" + secondBundleId + "]\n";
 
                 if (firstBundle != null && secondBundle != null) {
                     Set<String> firstBundleKeys = getMessageKeys(firstBundle.getKeys());
@@ -70,8 +72,7 @@ public class LocalizationBundlesCompareServlet extends AbstractLocalizationParen
                     messagesKeys.retainAll(secondBundleKeys);
 
                     for (String messageKey : messagesKeys) {
-                        StringBuilder firstMapDiffValues = new StringBuilder();
-                        StringBuilder secondMapDiffValues = new StringBuilder();
+                        StringBuilder diffValues = new StringBuilder();
                         Map<String, String> firstMap = getKeyValuePairsMap(getLocalizationValuesByLocale(firstBundle, messageKey));
                         Map<String, String> secondMap = getKeyValuePairsMap(getLocalizationValuesByLocale(secondBundle, messageKey));
 
@@ -80,19 +81,16 @@ public class LocalizationBundlesCompareServlet extends AbstractLocalizationParen
                         commonKeys.addAll(secondMap.keySet());
 
                         for (String key : commonKeys) {
-                            String firstValue = firstMap.get(key);
-                            String secondValue = secondMap.get(key);
+                            String firstValue = firstMap.get(key).replaceAll("[\r\n]", "");
+                            String secondValue = secondMap.get(key).replaceAll("[\r\n]", "");
 
                             if (!Objects.equals(firstValue, secondValue)) {
-                                firstMapDiffValues.append(key).append("=").append(firstValue != null ? firstValue : "").append("\n");
-                                secondMapDiffValues.append(key).append("=").append(secondValue != null ? secondValue : "").append("\n");
+                                diffValues.append(key).append(" = ").append(firstValue).append(" -> ").append(secondValue).append("\n");
                             }
                         }
 
-                        if (!firstMapDiffValues.isEmpty() || !secondMapDiffValues.isEmpty()) {
-                            result.append("==== ").append(messageKey).append(" ====\n")
-                                    .append(firstBundle.getName()).append("[").append(firstBundleId).append("]\n").append(firstMapDiffValues).append("\n")
-                                    .append(secondBundle.getName()).append("[").append(secondBundleId).append("]\n").append(secondMapDiffValues).append("\n");
+                        if (!diffValues.isEmpty()) {
+                            result.append("==== ").append(messageKey).append(" ====\n").append(diffValues);
                         }
 
                     }
@@ -108,7 +106,7 @@ public class LocalizationBundlesCompareServlet extends AbstractLocalizationParen
 
         if (isValid){
 
-            String resultData = result.isEmpty() ? "Bundles are equal" : result.toString();
+            String resultData = result.isEmpty() ? "Bundles are equal" : basedName + result;
             JSONObject data = new JSONObject();
             data.put("result", resultData);
             jsonResponse.setData(data);
