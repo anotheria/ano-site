@@ -81,8 +81,13 @@ public class LocalizationBundlesCompareServlet extends AbstractLocalizationParen
                         commonKeys.addAll(secondMap.keySet());
 
                         for (String key : commonKeys) {
-                            String firstValue = firstMap.get(key).replaceAll("[\r\n]", "");
-                            String secondValue = secondMap.get(key).replaceAll("[\r\n]", "");
+                            String firstValue = firstMap.get(key);
+                            if (!StringUtils.isEmpty(firstValue))
+                                firstValue = firstValue.replaceAll("[\r\n]", "");
+
+                            String secondValue = secondMap.get(key);
+                            if (!StringUtils.isEmpty(secondValue))
+                                secondValue = secondValue.replaceAll("[\r\n]", "");
 
                             if (!Objects.equals(firstValue, secondValue)) {
                                 diffValues.append(key).append(" = ").append(firstValue).append(" -> ").append(secondValue).append("\n");
