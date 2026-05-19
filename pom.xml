@@ -2,7 +2,7 @@
 	<parent>
 		<groupId>net.anotheria</groupId>
 		<artifactId>ano-doc-parent</artifactId>
-		<version>4.3.3</version>
+		<version>4.3.4-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -11,7 +11,6 @@
 	<name>anotheria.net site engine</name>
 
 	<properties>
-		<ano-doc.version>4.3.3</ano-doc.version>
 		<ano-util.version>4.0.0</ano-util.version>
 		<ano-tags.version>4.0.0</ano-tags.version>
 		<ano-maf.version>4.0.0</ano-maf.version>
@@ -74,11 +73,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
 			<version>1.10.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.anotheria</groupId>
-			<artifactId>ano-doc</artifactId>
-			<version>${ano-doc.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.anotheria</groupId>
