@@ -161,7 +161,6 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>${project.basedir}/java</sourceDirectory>
         <resources>
             <resource>
                 <directory>${project.basedir}/html</directory>
@@ -174,7 +173,7 @@
                 <targetPath>etc/def/as</targetPath>
             </resource>
             <resource>
-                <directory>${project.basedir}/java</directory>
+                <directory>${project.basedir}/src/main/java</directory>
                 <includes>
                     <include>**/*.jsp</include>
                 </includes>
@@ -188,27 +187,6 @@
             </resource>
         </resources>
         <plugins>
-            <!--
-                Wipe generated/ on clean — moved here from ano-doc-parent.
-            -->
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.3.2</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>${basedir}/generated</directory>
-                            <followSymlinks>false</followSymlinks>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-            <!--
-                Run the ano-doc generator at generate-sources — moved here from ano-doc-parent.
-                Plugin renamed from maven-ano-doc-plugin to ano-doc-maven-plugin.
-                The explicit <dependencies> block ensures the generator uses the same
-                ano-doc version as the compile dependency above.
-            -->
             <plugin>
                 <groupId>net.anotheria</groupId>
                 <artifactId>ano-doc-maven-plugin</artifactId>
@@ -222,7 +200,7 @@
                 </dependencies>
                 <configuration>
                     <baseDir>${basedir}</baseDir>
-                    <outputDir>${basedir}/generated</outputDir>
+                    <outputDir>${project.build.directory}/generated-sources/ano-doc</outputDir>
                 </configuration>
                 <executions>
                     <execution>
@@ -249,7 +227,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/generated/java</source>
+                                <source>${project.build.directory}/generated-sources/ano-doc/java</source>
                             </sources>
                         </configuration>
                     </execution>
