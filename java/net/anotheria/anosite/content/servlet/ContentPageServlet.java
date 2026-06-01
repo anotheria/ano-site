@@ -469,7 +469,7 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 		}
 
 		if (!pageResponse.canContinue()) {
-			LOGGER.warn("Page "+page.getName()+" ["+page.getId()+"] pageResponse " + pageResponse + " response can't continue");
+			LOGGER.warn("Page {} [{}] rendering stopped (response code: {}). A box handler interrupted the rendering pipeline; enable DEBUG logging to identify which box.", page.getName(), page.getId(), pageResponse.getCode());
 			return;
 		}
 
@@ -935,6 +935,7 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 				response = new InternalBoxBeanWithRedirectResponse(ret, ((ResponseRedirectAfterProcessing) handlerResponse).getRedirectTarget());
 				break;
 			case STOP:
+				LOGGER.debug("Box [{}] '{}' handler '{}' returned STOP, halting page rendering", box.getId(), box.getName(), box.getHandler());
 				response = new InternalResponse(handlerResponse);
 				break;
 			case ABORT:
@@ -1137,8 +1138,10 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 			}
 
 
-			if (!response.canContinue())
+			if (!response.canContinue()) {
+				LOGGER.debug("Box [{}] '{}' response {} - stopping box list processing", box.getId(), box.getName(), response.getCode());
 				return response;
+			}
 			ret.add(((InternalBoxBeanResponse) response).getBean());
 			if (response.getCode() == InternalResponseCode.CONTINUE_AND_REDIRECT && redirectUrl == null)
 //				redirectUrl = ((InternalBoxBeanListWithRedirectResponse)response).getRedirectUrl();
