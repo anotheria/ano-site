@@ -191,13 +191,6 @@
                 <groupId>net.anotheria</groupId>
                 <artifactId>ano-doc-maven-plugin</artifactId>
                 <version>${ano-doc.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>net.anotheria</groupId>
-                        <artifactId>ano-doc</artifactId>
-                        <version>${ano-doc.version}</version>
-                    </dependency>
-                </dependencies>
                 <configuration>
                     <baseDir>${basedir}</baseDir>
                     <outputDir>${project.build.directory}/generated-sources/ano-doc</outputDir>
