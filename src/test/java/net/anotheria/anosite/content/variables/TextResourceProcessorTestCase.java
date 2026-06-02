@@ -17,6 +17,7 @@ import org.junit.Test;
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletConnection;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
@@ -389,6 +390,20 @@ public class TextResourceProcessorTestCase {
 			return null;
 		}
 
+		@Override
+		public String getRequestId() {
+			return null;
+		}
+
+		@Override
+		public String getProtocolRequestId() {
+			return null;
+		}
+
+		@Override
+		public ServletConnection getServletConnection() {
+			return null;
+		}
 
 	}
 }
