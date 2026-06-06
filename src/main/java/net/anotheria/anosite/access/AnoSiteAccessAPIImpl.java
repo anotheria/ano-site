@@ -30,7 +30,6 @@ import net.anotheria.anosite.gen.anoaccessconfiguration.data.Permission;
 import net.anotheria.anosite.gen.anoaccessconfiguration.data.PermissionSortType;
 import net.anotheria.anosite.gen.anoaccessconfiguration.data.Role;
 import net.anotheria.anosite.gen.anoaccessconfiguration.data.RoleSortType;
-import net.anotheria.anosite.gen.anoaccessconfiguration.service.AccessOperationNotFoundInAnoAccessConfigurationServiceException;
 import net.anotheria.anosite.gen.anoaccessconfiguration.service.AnoAccessConfigurationServiceException;
 import net.anotheria.anosite.gen.anoaccessconfiguration.service.IAnoAccessConfigurationService;
 import net.anotheria.anosite.gen.ascustomaction.data.CustomActionDef;
@@ -336,8 +335,6 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 	private AccessOperation getAccessOperation(final String id) throws AnoSiteAccessAPIException {
 		try {
 			return accessConfigurationService.getAccessOperation(id);
-		} catch (AccessOperationNotFoundInAnoAccessConfigurationServiceException e) {
-			throw new AccessOperationNotFoundAPIException("Access operation with given id[" + id + "] not found.", e);
 		} catch (AnoAccessConfigurationServiceException e) {
 			throw new AnoSiteAccessAPIException(LogMessageUtil.failMsg(e, id), e);
 		}
