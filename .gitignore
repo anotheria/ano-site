@@ -3,5 +3,6 @@ target/**
 *.idea/**
 generated/*
 .claude/
+.DS_Store
 
 
