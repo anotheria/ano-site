@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -42,6 +43,14 @@ public class McpEndpoint {
 
     private static final Map<String, BlockingQueue<String>> SESSIONS = new ConcurrentHashMap<>();
     private static final McpToolRegistry REGISTRY = new McpToolRegistry();
+
+    public static void addTool(McpTool tool) {
+        REGISTRY.register(tool);
+    }
+
+    public static void addBundle(List<McpTool> bundle) {
+        REGISTRY.registerBundle(bundle);
+    }
 
     @GET
     @Path("/sse")
