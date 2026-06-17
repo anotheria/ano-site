@@ -476,7 +476,7 @@ public class ContentPageServlet extends BaseAnoSiteServlet {
 		String titleOverride = (String) req.getAttribute(OVERRIDE_PAGE_TITLE);
 
 		PageBean pageBean = ((InternalPageBeanResponse) pageResponse).getPageBean();
-		pageBean.setGenerated(generatedFormat.format(page.getLastUpdateTimestamp()));
+		pageBean.setGenerated(generatedFormat.format(page.getObjectInfo().getLastChangeTimestamp()));
 		if (pageBean.getTitle() == null || pageBean.getTitle().length() == 0)
 			pageBean.setTitle(siteBean.getTitle());
 		if (titleOverride != null && titleOverride.length() > 0)
