@@ -26,6 +26,7 @@ public class McpToolRegistry {
         register(new LocalizationTools.ListBundles());
         register(new LocalizationTools.GetBundle());
         register(new LocalizationTools.SetBundleKey());
+        register(new LocalizationTools.SetBundleKeys());
         register(new TextResourceTools.ListTextResources());
         register(new TextResourceTools.GetTextResource());
         register(new TextResourceTools.UpdateTextResource());
