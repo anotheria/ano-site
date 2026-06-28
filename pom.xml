@@ -178,12 +178,21 @@
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
+            <!-- this is the new podt 5.0.6 style -->
             <resource>
-                <directory>${project.basedir}/etc/def</directory>
+                <directory>${project.basedir}/src/main/definitions</directory>
                 <includes>
                     <include>**/*as-*.xml</include>
                 </includes>
-                <targetPath>etc/def/as</targetPath>
+                <targetPath>anosite-definitions</targetPath>
+            </resource>
+            <!-- this is the old, pre 5.0.6 style, kept for backward compatibility. -->
+            <resource>
+                <directory>${project.basedir}/src/main/definitions</directory>
+                <includes>
+                    <include>**/*as-*.xml</include>
+                </includes>
+                <targetPath>etc/def/as/</targetPath>
             </resource>
             <resource>
                 <directory>${project.basedir}/src/main/java</directory>
