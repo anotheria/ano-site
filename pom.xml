@@ -24,8 +24,8 @@
         -->
 		<ano-doc.version>5.0.7-SNAPSHOT</ano-doc.version>
 
-        <ano-util.version>4.0.0</ano-util.version>
-        <ano-tags.version>4.0.0</ano-tags.version>
+        <ano-util.version>4.0.5</ano-util.version>
+        <ano-tags.version>4.0.1</ano-tags.version>
         <ano-maf.version>4.0.0</ano-maf.version>
         <ano-prise.version>4.0.0</ano-prise.version>
         <ano-plass.version>4.0.0</ano-plass.version>
