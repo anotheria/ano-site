@@ -8,10 +8,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Properties;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.util.Map;
 
 /**
  * MCP tools for reading and editing localization bundles.
@@ -23,6 +22,54 @@ public final class LocalizationTools {
 
     private static IASResourceDataService service() throws Exception {
         return MetaFactory.get(IASResourceDataService.class);
+    }
+
+    // -------------------------------------------------------------------------
+    // Bundle message (de)serialization.
+    //
+    // The messages field is a plain line-based "key=value" string. Nothing is
+    // escaped: the key is everything before the first '=', the value is the
+    // rest of the line verbatim (so values may freely contain '=', ':', '!',
+    // '@', non-ASCII, etc.). This matches how the CMS import/export servlets
+    // (LocalizationBundleImportServlet / ...ExportToTxtAction) read and write
+    // bundles. Using java.util.Properties was wrong because Properties.store()
+    // adds backslash escapes before ':', '!', '#', spaces and non-ASCII, which
+    // corrupts the stored messages.
+    // -------------------------------------------------------------------------
+
+    /** Parse a bundle message string into an ordered key -> value map. */
+    private static Map<String, String> parse(String content) {
+        Map<String, String> result = new LinkedHashMap<>();
+        if (content == null || content.isBlank())
+            return result;
+        String lastKey = null;
+        for (String line : content.replace("\r", "").split("\n", -1)) {
+            if (line.isBlank())
+                continue;
+            int sep = line.indexOf('=');
+            if (sep <= 0) {
+                // no key -> continuation of the previous (multi-line) value
+                if (lastKey != null)
+                    result.put(lastKey, result.get(lastKey) + "\n" + line);
+                continue;
+            }
+            String key   = line.substring(0, sep);
+            String value = line.substring(sep + 1);
+            result.put(key, value);
+            lastKey = key;
+        }
+        return result;
+    }
+
+    /** Serialize an ordered key -> value map back to the bundle message format. */
+    private static String serialize(Map<String, String> entries) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> e : entries.entrySet()) {
+            if (sb.length() > 0)
+                sb.append('\n');
+            sb.append(e.getKey()).append('=').append(e.getValue());
+        }
+        return sb.toString();
     }
 
     // -------------------------------------------------------------------------
@@ -108,27 +155,15 @@ public final class LocalizationTools {
             LocalizationBundle bundle  = svc.getLocalizationBundle(id);
 
             String current = lang.equals("DE") ? bundle.getMessagesDE() : bundle.getMessagesEN();
-            String updated = setKey(current, key, value);
+            Map<String, String> props = parse(current);
+            props.put(key, value);
+            String updated = serialize(props);
 
             if (lang.equals("DE")) bundle.setMessagesDE(updated);
             else                   bundle.setMessagesEN(updated);
 
             svc.updateLocalizationBundle(bundle);
             return "Set " + key + "=" + value + " in bundle " + id + " [" + lang + "]";
-        }
-
-        private String setKey(String propertiesContent, String key, String value) throws Exception {
-            Properties props = new Properties();
-            if (propertiesContent != null && !propertiesContent.isBlank())
-                props.load(new StringReader(propertiesContent));
-            props.setProperty(key, value);
-            StringWriter sw = new StringWriter();
-            props.store(sw, null);
-            // strip the timestamp comment Properties.store() adds
-            return sw.toString().lines()
-                    .filter(l -> !l.startsWith("#"))
-                    .reduce((a, b) -> a + "\n" + b)
-                    .orElse("");
         }
     }
 
@@ -167,25 +202,18 @@ public final class LocalizationTools {
             LocalizationBundle bundle  = svc.getLocalizationBundle(id);
 
             String current = lang.equals("DE") ? bundle.getMessagesDE() : bundle.getMessagesEN();
-            Properties props = new Properties();
-            if (current != null && !current.isBlank())
-                props.load(new StringReader(current));
+            Map<String, String> props = parse(current);
 
             @SuppressWarnings("unchecked")
             Iterator<String> keys = entries.keys();
             int count = 0;
             while (keys.hasNext()) {
                 String key = keys.next();
-                props.setProperty(key, entries.getString(key));
+                props.put(key, entries.getString(key));
                 count++;
             }
 
-            StringWriter sw = new StringWriter();
-            props.store(sw, null);
-            String updated = sw.toString().lines()
-                    .filter(l -> !l.startsWith("#"))
-                    .reduce((a, b) -> a + "\n" + b)
-                    .orElse("");
+            String updated = serialize(props);
 
             if (lang.equals("DE")) bundle.setMessagesDE(updated);
             else                   bundle.setMessagesEN(updated);
