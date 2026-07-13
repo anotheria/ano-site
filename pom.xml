@@ -178,7 +178,7 @@
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
-            <!-- this is the new podt 5.0.6 style -->
+            <!-- this is the new  5.0.6 style -->
             <resource>
                 <directory>${project.basedir}/src/main/definitions</directory>
                 <includes>
