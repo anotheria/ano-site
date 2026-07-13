@@ -1,9 +1,12 @@
 package net.anotheria.anosite.cms.mcp.tools;
 
+import net.anotheria.anodoc.util.context.CallContext;
+import net.anotheria.anodoc.util.context.ContextManager;
 import net.anotheria.anoprise.metafactory.MetaFactory;
 import net.anotheria.anosite.cms.mcp.McpTool;
 import net.anotheria.anosite.gen.asresourcedata.data.LocalizationBundle;
 import net.anotheria.anosite.gen.asresourcedata.service.IASResourceDataService;
+import net.anotheria.anosite.gen.shared.service.AnositeLanguageUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -22,6 +25,48 @@ public final class LocalizationTools {
 
     private static IASResourceDataService service() throws Exception {
         return MetaFactory.get(IASResourceDataService.class);
+    }
+
+    // -------------------------------------------------------------------------
+    // Language handling.
+    //
+    // The number of languages is not fixed: extending projects override
+    // context.xml and can define many (e.g. baldur-cms has ~12). The set is
+    // generated into AnositeLanguageUtils.getSupportedLanguages(). A bundle
+    // stores one message column per language (messages_<LANG>); the generated
+    // getMessages()/setMessages() resolve that column from the current language
+    // of the thread-local CallContext. So we validate the requested language
+    // against the generated list and read/write through the CallContext instead
+    // of hardcoding EN/DE.
+    // -------------------------------------------------------------------------
+
+    /** Uppercase and validate the language against the project's supported languages. */
+    private static String normalizeLanguage(String language) {
+        String lang = language == null ? "" : language.trim().toUpperCase();
+        List<String> supported = AnositeLanguageUtils.getSupportedLanguages();
+        if (!supported.contains(lang))
+            throw new IllegalArgumentException("Unsupported language '" + language
+                    + "'. Supported languages: " + String.join(", ", supported));
+        return lang;
+    }
+
+    private static String languageDescription() {
+        return "Language code, one of: " + String.join(", ", AnositeLanguageUtils.getSupportedLanguages());
+    }
+
+    @FunctionalInterface
+    private interface LangAction<T> { T run() throws Exception; }
+
+    /** Run an action with the given language set on the thread-local CallContext, restoring it afterwards. */
+    private static <T> T withLanguage(String language, LangAction<T> action) throws Exception {
+        CallContext ctx = ContextManager.getCallContext();
+        String previous = ctx.getCurrentLanguage();
+        try {
+            ctx.setCurrentLanguage(language);
+            return action.run();
+        } finally {
+            ctx.setCurrentLanguage(previous);
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -101,13 +146,13 @@ public final class LocalizationTools {
 
         @Override public String name() { return "localization_get_bundle"; }
         @Override public String description() {
-            return "Get all key=value pairs from a localization bundle for a given language (EN or DE).";
+            return "Get all key=value pairs from a localization bundle for a given language.";
         }
 
         @Override public JSONObject inputSchema() throws JSONException {
             JSONObject props = new JSONObject();
             props.put("id",       new JSONObject().put("type", "string").put("description", "Bundle id"));
-            props.put("language", new JSONObject().put("type", "string").put("description", "Language code, e.g. EN or DE"));
+            props.put("language", new JSONObject().put("type", "string").put("description", languageDescription()));
             return new JSONObject()
                     .put("type", "object")
                     .put("properties", props)
@@ -116,9 +161,9 @@ public final class LocalizationTools {
 
         @Override public String execute(JSONObject arguments) throws Exception {
             String id   = arguments.getString("id");
-            String lang = arguments.getString("language").toUpperCase();
+            String lang = normalizeLanguage(arguments.getString("language"));
             LocalizationBundle bundle = service().getLocalizationBundle(id);
-            return lang.equals("DE") ? bundle.getMessagesDE() : bundle.getMessagesEN();
+            return withLanguage(lang, bundle::getMessages);
         }
     }
 
@@ -135,7 +180,7 @@ public final class LocalizationTools {
         @Override public JSONObject inputSchema() throws JSONException {
             JSONObject props = new JSONObject();
             props.put("id",       new JSONObject().put("type", "string").put("description", "Bundle id"));
-            props.put("language", new JSONObject().put("type", "string").put("description", "Language code, e.g. EN or DE"));
+            props.put("language", new JSONObject().put("type", "string").put("description", languageDescription()));
             props.put("key",      new JSONObject().put("type", "string").put("description", "Property key"));
             props.put("value",    new JSONObject().put("type", "string").put("description", "Property value"));
             return new JSONObject()
@@ -147,20 +192,19 @@ public final class LocalizationTools {
 
         @Override public String execute(JSONObject arguments) throws Exception {
             String id    = arguments.getString("id");
-            String lang  = arguments.getString("language").toUpperCase();
+            String lang  = normalizeLanguage(arguments.getString("language"));
             String key   = arguments.getString("key");
             String value = arguments.getString("value");
 
             IASResourceDataService svc = service();
             LocalizationBundle bundle  = svc.getLocalizationBundle(id);
 
-            String current = lang.equals("DE") ? bundle.getMessagesDE() : bundle.getMessagesEN();
-            Map<String, String> props = parse(current);
-            props.put(key, value);
-            String updated = serialize(props);
-
-            if (lang.equals("DE")) bundle.setMessagesDE(updated);
-            else                   bundle.setMessagesEN(updated);
+            withLanguage(lang, () -> {
+                Map<String, String> props = parse(bundle.getMessages());
+                props.put(key, value);
+                bundle.setMessages(serialize(props));
+                return null;
+            });
 
             svc.updateLocalizationBundle(bundle);
             return "Set " + key + "=" + value + " in bundle " + id + " [" + lang + "]";
@@ -184,7 +228,7 @@ public final class LocalizationTools {
                     .put("additionalProperties", new JSONObject().put("type", "string"));
             JSONObject props = new JSONObject();
             props.put("id",       new JSONObject().put("type", "string").put("description", "Bundle id"));
-            props.put("language", new JSONObject().put("type", "string").put("description", "Language code, e.g. EN or DE"));
+            props.put("language", new JSONObject().put("type", "string").put("description", languageDescription()));
             props.put("entries",  entriesSchema);
             return new JSONObject()
                     .put("type", "object")
@@ -195,28 +239,25 @@ public final class LocalizationTools {
 
         @Override public String execute(JSONObject arguments) throws Exception {
             String id      = arguments.getString("id");
-            String lang    = arguments.getString("language").toUpperCase();
+            String lang    = normalizeLanguage(arguments.getString("language"));
             JSONObject entries = arguments.getJSONObject("entries");
 
             IASResourceDataService svc = service();
             LocalizationBundle bundle  = svc.getLocalizationBundle(id);
 
-            String current = lang.equals("DE") ? bundle.getMessagesDE() : bundle.getMessagesEN();
-            Map<String, String> props = parse(current);
-
-            @SuppressWarnings("unchecked")
-            Iterator<String> keys = entries.keys();
-            int count = 0;
-            while (keys.hasNext()) {
-                String key = keys.next();
-                props.put(key, entries.getString(key));
-                count++;
-            }
-
-            String updated = serialize(props);
-
-            if (lang.equals("DE")) bundle.setMessagesDE(updated);
-            else                   bundle.setMessagesEN(updated);
+            int count = withLanguage(lang, () -> {
+                Map<String, String> props = parse(bundle.getMessages());
+                @SuppressWarnings("unchecked")
+                Iterator<String> keys = entries.keys();
+                int c = 0;
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    props.put(key, entries.getString(key));
+                    c++;
+                }
+                bundle.setMessages(serialize(props));
+                return c;
+            });
 
             svc.updateLocalizationBundle(bundle);
             return "Set " + count + " key(s) in bundle " + id + " [" + lang + "]";
