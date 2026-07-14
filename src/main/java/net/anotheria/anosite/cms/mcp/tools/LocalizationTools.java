@@ -6,7 +6,6 @@ import net.anotheria.anoprise.metafactory.MetaFactory;
 import net.anotheria.anosite.cms.mcp.McpTool;
 import net.anotheria.anosite.gen.asresourcedata.data.LocalizationBundle;
 import net.anotheria.anosite.gen.asresourcedata.service.IASResourceDataService;
-import net.anotheria.anosite.gen.shared.service.AnositeLanguageUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -31,19 +30,25 @@ public final class LocalizationTools {
     // Language handling.
     //
     // The number of languages is not fixed: extending projects override
-    // context.xml and can define many (e.g. baldur-cms has ~12). The set is
-    // generated into AnositeLanguageUtils.getSupportedLanguages(). A bundle
-    // stores one message column per language (messages_<LANG>); the generated
-    // getMessages()/setMessages() resolve that column from the current language
-    // of the thread-local CallContext. So we validate the requested language
-    // against the generated list and read/write through the CallContext instead
-    // of hardcoding EN/DE.
+    // context.xml and can define many (e.g. baldur-cms has ~12). We must not
+    // depend on the project-specific generated language-utils class name
+    // (AnositeLanguageUtils, BaldurLanguageUtils, ...). Instead we ask the
+    // thread-local CallContext, whose concrete (generated) implementation is
+    // wired to the running project's languages. A bundle stores one message
+    // column per language (messages_<LANG>); the generated getMessages()/
+    // setMessages() resolve that column from the CallContext's current language.
+    // So we validate against CallContext.getSupportedLanguages() and read/write
+    // through the CallContext instead of hardcoding EN/DE.
     // -------------------------------------------------------------------------
+
+    private static List<String> supportedLanguages() {
+        return ContextManager.getCallContext().getSupportedLanguages();
+    }
 
     /** Uppercase and validate the language against the project's supported languages. */
     private static String normalizeLanguage(String language) {
         String lang = language == null ? "" : language.trim().toUpperCase();
-        List<String> supported = AnositeLanguageUtils.getSupportedLanguages();
+        List<String> supported = supportedLanguages();
         if (!supported.contains(lang))
             throw new IllegalArgumentException("Unsupported language '" + language
                     + "'. Supported languages: " + String.join(", ", supported));
@@ -51,7 +56,7 @@ public final class LocalizationTools {
     }
 
     private static String languageDescription() {
-        return "Language code, one of: " + String.join(", ", AnositeLanguageUtils.getSupportedLanguages());
+        return "Language code, one of: " + String.join(", ", supportedLanguages());
     }
 
     @FunctionalInterface
