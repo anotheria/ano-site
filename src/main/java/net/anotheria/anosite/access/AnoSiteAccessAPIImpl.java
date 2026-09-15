@@ -558,7 +558,7 @@ public class AnoSiteAccessAPIImpl implements AnoSiteAccessAPI {
 			try {
 				user = userDataService.getUserDef(userData.getUserId());
 			} catch (NoSuchDocumentException e1) {
-				LOGGER.warn("Couldn't get user by id "+userData.getUserId()+", {"+userData+"}", e1);
+				LOGGER.warn("Couldn't get user by id "+userData.getUserId()+", {"+userData+"}, skipping.");
 				continue;
 			} catch (ASUserDataServiceException e) {
 				LOGGER.error("Error occurred while getting UserDef by id", e);
