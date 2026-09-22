@@ -35,9 +35,30 @@
         <moskito.version>4.0.9</moskito.version>
         <commons-io.version>2.15.0</commons-io.version>
         <json.version>20231013</json.version>
+        <!-- official MCP java sdk, used by the mcp server in net.anotheria.anosite.cms.mcp -->
+        <mcp-sdk.version>2.0.1</mcp-sdk.version>
+        <jackson.version>2.21.4</jackson.version>
         <source-version>21</source-version>
         <target-version>21</target-version>
     </properties>
+
+    <!--
+        Jackson arrives through several transitive paths at versions that don't match each other -
+        moskito-webui pulls jackson-annotations 2.15.3 while jackson-databind resolves to 2.21.4, and
+        databind fails to initialize against annotations that old. The bom keeps every jackson artifact
+        on one version.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!--
@@ -170,6 +191,26 @@
             <groupId>com.theokanning.openai-gpt3-java</groupId>
             <artifactId>service</artifactId>
             <version>0.16.1</version>
+        </dependency>
+
+        <!--
+            MCP server support (net.anotheria.anosite.cms.mcp). Optional on purpose:
+            ano-site is embedded in a lot of webapps, but only the ones that actually
+            enable the mcp server should pull mcp-core's reactor-core and the jackson
+            databind of the json module. Projects that register McpBootstrap in their
+            web.xml have to redeclare both dependencies.
+        -->
+        <dependency>
+            <groupId>io.modelcontextprotocol.sdk</groupId>
+            <artifactId>mcp-core</artifactId>
+            <version>${mcp-sdk.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.modelcontextprotocol.sdk</groupId>
+            <artifactId>mcp-json-jackson2</artifactId>
+            <version>${mcp-sdk.version}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
