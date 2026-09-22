@@ -1,24 +1,37 @@
 package net.anotheria.anosite.cms.mcp;
 
+import io.modelcontextprotocol.server.McpStatelessServerFeatures;
 import net.anotheria.anosite.cms.mcp.tools.LocalizationTools;
 import net.anotheria.anosite.cms.mcp.tools.TextResourceTools;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Registers all MCP tools and dispatches tool/list and tools/call requests.
+ * Holds the tools the MCP server exposes.
+ *
+ * <p>The shared registry is filled at startup: this class contributes the cms wide tools itself, projects add
+ * their own with {@link #addTool(McpTool)} / {@link #addBundle(List)} from their context listener.
+ * {@link McpBootstrap} reads it once when it builds the server, so registration has to happen before the
+ * bootstrap listener runs — see its class comment for the web.xml ordering that guarantees that.
+ *
+ * <p>Dispatching tools/list and tools/call is no longer done here; that is the sdk's job since the endpoint
+ * moved to the official MCP server implementation.
  */
 public class McpToolRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(McpToolRegistry.class);
+
+    /**
+     * Registry the bootstrap builds its server from.
+     */
+    private static final McpToolRegistry SHARED = new McpToolRegistry();
 
     private final Map<String, McpTool> tools = new LinkedHashMap<>();
 
@@ -32,64 +45,68 @@ public class McpToolRegistry {
         register(new TextResourceTools.UpdateTextResource());
     }
 
+    /**
+     * The registry the MCP server is built from.
+     *
+     * @return shared registry
+     */
+    public static McpToolRegistry shared() {
+        return SHARED;
+    }
+
+    /**
+     * Adds one tool to the shared registry.
+     *
+     * @param tool tool to expose
+     */
+    public static void addTool(McpTool tool) {
+        SHARED.register(tool);
+    }
+
+    /**
+     * Adds a group of tools to the shared registry, typically one generated {@code *McpTools.all()}.
+     *
+     * @param bundle tools to expose
+     */
+    public static void addBundle(List<McpTool> bundle) {
+        SHARED.registerBundle(bundle);
+    }
+
     public void register(McpTool tool) {
-        tools.put(tool.name(), tool);
+        McpTool previous = tools.put(tool.name(), tool);
+        if (previous != null)
+            LOG.warn("Tool {} registered twice, {} replaces {}", tool.name(),
+                    tool.getClass().getName(), previous.getClass().getName());
     }
 
     public void registerBundle(List<McpTool> bundle) {
-        bundle.forEach(t -> tools.put(t.name(), t));
+        bundle.forEach(this::register);
     }
 
-    public JSONObject initialize() throws JSONException {
-        JSONObject caps = new JSONObject();
-        caps.put("tools", new JSONObject());
-        JSONObject info = new JSONObject();
-        info.put("name", "AnoSite CMS");
-        info.put("version", "1.0.0");
-        JSONObject result = new JSONObject();
-        result.put("protocolVersion", "2024-11-05");
-        result.put("capabilities", caps);
-        result.put("serverInfo", info);
-        return result;
+    /**
+     * Registered tools, in registration order.
+     *
+     * @return registered tools
+     */
+    public Collection<McpTool> tools() {
+        return tools.values();
     }
 
-    public JSONObject toolsList() throws JSONException {
-        JSONArray list = new JSONArray();
-        for (McpTool tool : tools.values()) {
-            JSONObject entry = new JSONObject();
-            entry.put("name", tool.name());
-            entry.put("description", tool.description());
-            entry.put("inputSchema", tool.inputSchema());
-            list.put(entry);
-        }
-        JSONObject result = new JSONObject();
-        result.put("tools", list);
-        return result;
-    }
+    /**
+     * Builds the sdk specifications for all registered tools.
+     *
+     * <p>Input schemas are read here, once, at server build time. Some of them describe the project's data —
+     * {@code LocalizationTools} for instance lists the supported languages of the running project — so the
+     * cms tiers have to be configured by the time this runs.
+     *
+     * @return specifications to hand to the server builder
+     * @throws JSONException if a tool's input schema can't be read
+     */
+    public List<McpStatelessServerFeatures.SyncToolSpecification> specifications() throws JSONException {
+        List<McpStatelessServerFeatures.SyncToolSpecification> specifications = new ArrayList<>(tools.size());
+        for (McpTool tool : tools.values())
+            specifications.add(McpToolAdapter.toSpecification(tool));
 
-    public JSONObject toolCall(JSONObject params) throws JSONException {
-        String name = params.getString("name");
-        JSONObject arguments = params.optJSONObject("arguments");
-        if (arguments == null) arguments = new JSONObject();
-
-        McpTool tool = tools.get(name);
-        if (tool == null)
-            return errorContent("Unknown tool: " + name);
-
-        try {
-            String text = tool.execute(arguments);
-            JSONArray content = new JSONArray();
-            content.put(new JSONObject().put("type", "text").put("text", text));
-            return new JSONObject().put("content", content);
-        } catch (Exception e) {
-            LOG.error("Tool {} failed", name, e);
-            return errorContent("Tool execution failed: " + e.getMessage());
-        }
-    }
-
-    private JSONObject errorContent(String message) throws JSONException {
-        JSONArray content = new JSONArray();
-        content.put(new JSONObject().put("type", "text").put("text", message));
-        return new JSONObject().put("content", content).put("isError", true);
+        return specifications;
     }
 }
