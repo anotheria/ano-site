@@ -1,0 +1,16 @@
+{
+  "transferEnabled": true,
+  "@transferTargetGroups": [
+    {
+      "name": "test",
+      "@targets": [
+        {"name": "test1", "url": "https://test1.example.com/api"},
+        {"name": "test2", "url": "https://test2.example.com/asg-api"}
+      ]
+    },
+    {
+      "name": "prod",
+      "@targets": [{"name": "prod1", "url": "https://www.example.com/api/"}]
+    }
+  ]
+}

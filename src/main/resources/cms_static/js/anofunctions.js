@@ -315,37 +315,143 @@ function lightbox(text, href) {
 }
 
 //open lightbox for transfer function
-function lightboxTransfer(action, document, id){
-	var onclickFunc = '$.post(\'' + action +'\', {pId:\'' + id +'\' }, function (response) {' +
-    ' if (response.errors != undefined && response.errors.length != 0) {' +
-        'notification(response.errors.error);' +
-    '} else {location.reload(true); }})';
+//Asks for target group and mode first, then posts the transfer and shows what came back per target.
+function lightboxTransfer(action, documentName, id){
+	showTransferBox('<div class="transfer_box"><h3>Transfer ' + documentName + '</h3><p>Loading transfer targets ...</p></div>');
 
-	var text = 'Are you sure you want to transfer to prod ' + document + ' with id: ' + id +'?';
-    var loadingText = 'Transferring ' + document + ' with id ' + id + ' ...';
-    var buttons = '<div class="overlay_buttons"><a href="#" onclick="'+ onclickFunc+ '" class="button"  id="ok_button"><span>OK</span></a><a href="#" class="button" id="cancel_button"><span>Cancel</span></a></div>';
-    var el = $('.lightbox');
-    el.show();
-    text = text + buttons;
-    el.find('.box_in .text_here').html(text);
-    $('.lightbox .box').css('width', 'auto');
-    $('.lightbox .box').width($('.lightbox .box_in').width());
-    var wid = el.find('.box').width();
-    var box = el.find('.box');
-    var hig = el.find('.box').height();
-    box.css('left', '50%');
-    box.css('margin-left', -wid / 2);
-    //box.css('top', link.offset().top);
-    box.css('top', '50%');
-    box.css('margin-top', -hig / 2);
-    box.css('position', 'fixed');
+	//relative on purpose: the cms is not always mounted under /cms, and the transfer action path handed in
+	//above is relative too, so both resolve against whatever the current cms page is.
+	$.post('asgTransferTargets', {}, function (response) {
+		var data = response.data || {};
+		if (!data.enabled) {
+			showTransferBox(transferMessage(documentName, 'Transfer is not enabled on this instance. Set <code>transferEnabled</code> in anositeconfig.'));
+			bindTransferClose();
+			return;
+		}
+		if (!data.groups || data.groups.length === 0) {
+			showTransferBox(transferMessage(documentName, 'No transfer target groups are configured in anositeconfig.'));
+			bindTransferClose();
+			return;
+		}
+		showTransferBox(transferForm(documentName, id, data));
+		bindTransferClose();
+		$('#transfer_ok_button').click(function () {
+			runTransfer(action, documentName, id);
+			return false;
+		});
+	}).fail(function () {
+		showTransferBox(transferMessage(documentName, 'Could not load the transfer targets.'));
+		bindTransferClose();
+	});
 
-    $('#ok_button', el).on('click', function () {
-        el.find('.overlay_buttons').hide();
-        var loading = '<div class="loading-transfer"></div>';
-        el.find('.box_in .text_here').html(loadingText + loading);
-    });
-    return false;
+	return false;
+}
+
+//the dialog asking where and how much to transfer
+function transferForm(documentName, id, data){
+	var html = '<div class="transfer_box"><h3>Transfer ' + documentName + '</h3>';
+	html += '<p>Document id: ' + id + '</p>';
+
+	html += '<p><b>Target</b></p>';
+	for (var i = 0; i < data.groups.length; i++) {
+		var group = data.groups[i];
+		var targetNames = [];
+		for (var t = 0; t < group.targets.length; t++)
+			targetNames.push(group.targets[t].name);
+
+		html += '<label><input type="radio" name="transferTarget" value="' + group.name + '"' + (i === 0 ? ' checked="checked"' : '') + '> ' +
+			group.name + ' <span class="transfer_hint">(' + targetNames.join(', ') + ')</span></label><br/>';
+	}
+
+	html += '<p><b>Scope</b></p>';
+	for (var m = 0; m < data.modes.length; m++) {
+		var mode = data.modes[m];
+		html += '<label><input type="radio" name="transferMode" value="' + mode.value + '"' + (m === 0 ? ' checked="checked"' : '') + '> ' +
+			mode.label + '</label><br/>';
+	}
+
+	html += '<div class="overlay_buttons"><a href="#" class="button" id="transfer_ok_button"><span>Transfer</span></a>' +
+		'<a href="#" class="button" id="cancel_button"><span>Cancel</span></a></div>';
+	html += '</div>';
+	return html;
+}
+
+//posts the transfer and renders the report
+function runTransfer(action, documentName, id){
+	var target = $('input[name="transferTarget"]:checked').val();
+	var mode = $('input[name="transferMode"]:checked').val();
+
+	showTransferBox('<div class="transfer_box"><h3>Transfer ' + documentName + '</h3>' +
+		'<p>Transferring to ' + target + ' ...</p><div class="loading-transfer"></div></div>');
+
+	$.post(action, {pId: id, transferTarget: target, transferMode: mode}, function (response) {
+		showTransferBox(transferResult(documentName, response));
+		bindTransferClose();
+	}).fail(function () {
+		showTransferBox(transferMessage(documentName, 'The transfer request failed.'));
+		bindTransferClose();
+	});
+}
+
+//what came back, per target, plus whatever the server warned about
+function transferResult(documentName, response){
+	var data = response.data || {};
+	var html = '<div class="transfer_box"><h3>Transfer ' + documentName + '</h3>';
+
+	if (data.documentCount !== undefined)
+		html += '<p>' + data.documentCount + ' document(s) to ' + data.group + ', mode ' + data.mode + '.</p>';
+
+	var targets = data.targets || [];
+	for (var i = 0; i < targets.length; i++) {
+		var t = targets[i];
+		html += '<p>' + (t.success ? 'OK' : 'FAILED') + ': ' + t.name + ' (' + t.url + ') - ' +
+			t.succeeded + ' transferred, ' + t.failed + ' failed.</p>';
+		for (var e = 0; e < t.errors.length; e++)
+			html += '<p class="transfer_error">' + t.errors[e] + '</p>';
+	}
+
+	if (response.errors !== undefined && response.errors.error !== undefined)
+		for (var g = 0; g < response.errors.error.length; g++)
+			html += '<p class="transfer_error">' + response.errors.error[g] + '</p>';
+
+	var warnings = data.warnings || [];
+	for (var w = 0; w < warnings.length; w++)
+		html += '<p class="transfer_warning">' + warnings[w] + '</p>';
+
+	if (targets.length === 0 && (response.errors === undefined || response.errors.error === undefined))
+		html += '<p>Nothing was transferred.</p>';
+
+	html += '<div class="overlay_buttons"><a href="#" class="button" id="cancel_button"><span>Close</span></a></div>';
+	html += '</div>';
+	return html;
+}
+
+function transferMessage(documentName, message){
+	return '<div class="transfer_box"><h3>Transfer ' + documentName + '</h3><p>' + message + '</p>' +
+		'<div class="overlay_buttons"><a href="#" class="button" id="cancel_button"><span>Close</span></a></div></div>';
+}
+
+//puts html into the lightbox and centers it
+function showTransferBox(html){
+	var el = $('.lightbox');
+	el.show();
+	el.find('.box_in .text_here').html(html);
+	$('.lightbox .box').css('width', 'auto');
+	$('.lightbox .box').width($('.lightbox .box_in').width());
+	var box = el.find('.box');
+	box.css('left', '50%');
+	box.css('margin-left', -box.width() / 2);
+	box.css('top', '50%');
+	box.css('margin-top', -box.height() / 2);
+	box.css('position', 'fixed');
+}
+
+//the global close handler is bound with live() and does not catch buttons rendered afterwards
+function bindTransferClose(){
+	$('.lightbox #cancel_button').click(function () {
+		$('.lightbox').hide();
+		return false;
+	});
 }
 
 //close lightbox
