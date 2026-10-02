@@ -1,6 +1,6 @@
   <module name="ASWebData">
     <listener class="net.anotheria.anosite.cms.listener.CRUDLogListener"/>
-	<listener class="net.anotheria.anosite.cms.listener.AutoTransferAsWebDataListener" />
+	<listener class="net.anotheria.anosite.cms.listener.AutoTransferListener" />
 	<document name="Pagex">
 		<property type="string" name="name"/>
         <property type="string" name="localizedName" multilingual="true"/>

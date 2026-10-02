@@ -1,7 +1,7 @@
 <module name="AnoAccessApplicationData">
 	<listener class="net.anotheria.anosite.cms.listener.CRUDLogListener" />
 	<listener class="net.anotheria.anosite.cms.listener.UserAccessGrantListener" />
-	<listener class="net.anotheria.anosite.cms.listener.AutoTransferAnoAccessApplicationDataListener" />
+	<listener class="net.anotheria.anosite.cms.listener.AutoTransferListener" />
 
 	<options>
 		<option name="fixture">true</option>

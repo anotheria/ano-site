@@ -3,6 +3,7 @@
   "@transferTargetGroups": [
     {
       "name": "test",
+      "autoTransfer": true,
       "@targets": [
         {"name": "test1", "url": "https://test1.example.com/api"},
         {"name": "test2", "url": "https://test2.example.com/asg-api"}

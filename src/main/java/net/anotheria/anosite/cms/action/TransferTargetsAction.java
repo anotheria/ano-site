@@ -51,6 +51,8 @@ public class TransferTargetsAction extends BaseToolsAction {
         for (TransferTargetGroup group : config.getUsableTransferTargetGroups()) {
             JSONObject groupJson = new JSONObject();
             groupJson.put("name", group.getName());
+            //an editor should know which group is kept in sync by itself before transferring into it by hand.
+            groupJson.put("autoTransfer", group.isAutoTransfer());
 
             JSONArray targets = new JSONArray();
             for (TransferTarget target : group.getTargets())

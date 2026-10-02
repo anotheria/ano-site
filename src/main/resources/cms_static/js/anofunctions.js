@@ -359,8 +359,12 @@ function transferForm(documentName, id, data){
 		for (var t = 0; t < group.targets.length; t++)
 			targetNames.push(group.targets[t].name);
 
+		var hint = targetNames.join(', ');
+		if (group.autoTransfer)
+			hint += ' - auto transferred';
+
 		html += '<label><input type="radio" name="transferTarget" value="' + group.name + '"' + (i === 0 ? ' checked="checked"' : '') + '> ' +
-			group.name + ' <span class="transfer_hint">(' + targetNames.join(', ') + ')</span></label><br/>';
+			group.name + ' <span class="transfer_hint">(' + hint + ')</span></label><br/>';
 	}
 
 	html += '<p><b>Scope</b></p>';

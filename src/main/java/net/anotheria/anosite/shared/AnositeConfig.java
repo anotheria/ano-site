@@ -4,12 +4,16 @@ import net.anotheria.anosite.transfer.TransferTargetGroup;
 import org.configureme.ConfigurationManager;
 import org.configureme.annotations.Configure;
 import org.configureme.annotations.ConfigureMe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @ConfigureMe
 public class AnositeConfig{
+	private static final Logger LOGGER = LoggerFactory.getLogger(AnositeConfig.class);
+
 	private static AnositeConfig instance = new AnositeConfig();
 	
 	@Configure private boolean enforceHttps = true;
@@ -37,7 +41,15 @@ public class AnositeConfig{
 	public static AnositeConfig getInstance(){ return instance; }
 		
 	private AnositeConfig(){
-		ConfigurationManager.INSTANCE.configure(this);
+		try{
+			ConfigurationManager.INSTANCE.configure(this);
+		}catch(IllegalArgumentException e){
+			//an installation without an anositeconfig.json runs on the defaults below, which is what it
+			//always meant to do. Throwing here used to take the whole class down with an
+			//ExceptionInInitializerError, and since the auto transfer asks this config on every saved
+			//document, that would turn a missing file into an error per save.
+			LOGGER.warn("No anositeconfig found, running with defaults [" + e.getMessage() + "]");
+		}
 	}
 	
 	public boolean enforceHttps(){ return enforceHttps; }
@@ -121,6 +133,24 @@ public class AnositeConfig{
 				usable.add(group);
 
 		return usable;
+	}
+
+	/**
+	 * The groups every editor change is published into by itself, among the usable ones.
+	 *
+	 * <p>Empty unless a group says {@code autoTransfer: true}, and empty whenever transfer is off here - the
+	 * auto transfer is the ordinary transfer without an editor clicking it, not a second mechanism with its
+	 * own switch.
+	 *
+	 * @return usable groups with auto transfer enabled, in configuration order.
+	 */
+	public List<TransferTargetGroup> getAutoTransferTargetGroups() {
+		List<TransferTargetGroup> auto = new ArrayList<>();
+		for (TransferTargetGroup group : getUsableTransferTargetGroups())
+			if (group.isAutoTransfer())
+				auto.add(group);
+
+		return auto;
 	}
 
 	/**

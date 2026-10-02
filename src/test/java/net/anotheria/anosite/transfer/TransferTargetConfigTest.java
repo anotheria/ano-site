@@ -6,6 +6,7 @@ import org.configureme.annotations.ConfigureMe;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -33,6 +34,7 @@ public class TransferTargetConfigTest {
         TransferTargetGroup test = holder.transferTargetGroups[0];
         assertEquals("test", test.getName());
         assertTrue("a parsed group has to be usable", test.isValid());
+        assertTrue("the auto transfer flag of the group should have been read", test.isAutoTransfer());
         assertEquals("both targets of the group should have been read", 2, test.getTargets().length);
         assertEquals("test1", test.getTargets()[0].getName());
         assertEquals("https://test1.example.com/api", test.getTargets()[0].getUrl());
@@ -42,6 +44,9 @@ public class TransferTargetConfigTest {
 
         TransferTargetGroup prod = holder.transferTargetGroups[1];
         assertEquals("prod", prod.getName());
+        //a group that says nothing about it does not publish by itself - production is transferred into
+        //deliberately, after somebody looked at the result on test.
+        assertFalse("auto transfer has to stay off unless a group asks for it", prod.isAutoTransfer());
         assertEquals(1, prod.getTargets().length);
         assertEquals("the trailing slash should be trimmed off",
                 "https://www.example.com/api", prod.getTargets()[0].getNormalizedUrl());

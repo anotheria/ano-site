@@ -119,13 +119,56 @@ public class DocumentTransferServiceTest {
     }
 
     @Test
-    public void referencedFilesAreReportedBecauseTheyDoNotTravel() throws Exception {
+    public void referencedFilesTravelWithTheirDocument() throws Exception {
+        //files used to be listed as a warning, as something an editor had to copy by hand afterwards. They
+        //are uploaded with the document now, so planning has nothing to complain about - only an upload that
+        //actually fails does, and that happens per target.
         support.document("Image", "5").withFile("logo.png");
 
         TransferPlan plan = service.plan(key("Image", "5"), TransferMode.SINGLE);
 
-        assertEquals(1, plan.warnings().size());
-        assertTrue(plan.warnings().get(0).contains("logo.png"));
+        assertTrue("files are not a warning anymore", plan.warnings().isEmpty());
+        assertEquals(List.of("logo.png"), plan.documents().get(0).referencedFiles());
+    }
+
+    @Test
+    public void theRestPathOfADocumentIsItsModuleAndTypeInLowerCase() {
+        //the generated supports call this instead of carrying a baked in literal, and a deletion needs it
+        //when the document itself is already gone.
+        assertEquals("testmodule/localizationbundle", support.getRestPath("LocalizationBundle"));
+    }
+
+    @Test
+    public void aTransferIsRefusedWhileTheInstanceIsNotAllowedToPublish() {
+        //no anositeconfig in the test classpath, so transfer is off - which is the default an installation
+        //that was not set up to publish runs with.
+        try {
+            service.transfer(key("Page", "1"), TransferMode.SINGLE, "test");
+            fail("transferring from an instance with transfer disabled should fail");
+        } catch (DocumentTransferException e) {
+            assertTrue(e.getMessage().contains("not enabled"));
+        }
+    }
+
+    @Test
+    public void aDeletionIsRefusedWhileTheInstanceIsNotAllowedToPublish() {
+        //the auto transfer deletes through the same engine, so the same switch has to hold it back.
+        TransferTargetGroup group = new TransferTargetGroup();
+        group.setName("test");
+        group.setAutoTransfer(true);
+
+        try {
+            service.delete(key("Page", "1"), group);
+            fail("deleting on a target from an instance with transfer disabled should fail");
+        } catch (DocumentTransferException e) {
+            assertTrue(e.getMessage().contains("not enabled"));
+        }
+    }
+
+    @Test
+    public void nothingIsAutoTransferredUntilAGroupAsksForIt() {
+        assertTrue("an instance without configuration publishes nowhere by itself",
+                service.getAutoTransferTargetGroups().isEmpty());
     }
 
     @Test
@@ -243,8 +286,8 @@ public class DocumentTransferServiceTest {
             if (document == null)
                 throw new IllegalStateException("No such document: " + key);
 
-            return new DocumentSnapshot(key, moduleName.toLowerCase() + "/" + documentName.toLowerCase(),
-                    "payload of " + key, document.references, document.files);
+            return new DocumentSnapshot(key, getRestPath(documentName), "payload of " + key,
+                    document.references, document.files);
         }
     }
 

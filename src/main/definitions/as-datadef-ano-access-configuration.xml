@@ -1,6 +1,6 @@
 <module name="AnoAccessConfiguration">
 	<listener class="net.anotheria.anosite.cms.listener.CRUDLogListener" />
-	<listener class="net.anotheria.anosite.cms.listener.AutoTransferAnoAccessConfigurationListener" />
+	<listener class="net.anotheria.anosite.cms.listener.AutoTransferListener" />
 	<options>
 		<option name="fixture">true</option>
 	</options>

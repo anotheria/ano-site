@@ -1,6 +1,6 @@
   <module name="ASLayoutData">
     <listener class="net.anotheria.anosite.cms.listener.CRUDLogListener"/>
-	  <listener class="net.anotheria.anosite.cms.listener.AutoTransferLayoutListener" />
+	  <listener class="net.anotheria.anosite.cms.listener.AutoTransferListener" />
   	<document name="PageStyle">
 		<property name="name" type="string"/>
 		<property name="css" type="text"/>

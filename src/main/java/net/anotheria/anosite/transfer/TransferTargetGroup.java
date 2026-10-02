@@ -20,6 +20,7 @@ import java.util.Arrays;
  * "&#64;transferTargetGroups": [
  *     {
  *         "name": "test",
+ *         "autoTransfer": true,
  *         "&#64;targets": [
  *             {"name": "test1", "url": "https://test1.example.com/api"},
  *             {"name": "test2", "url": "https://test2.example.com/api"}
@@ -51,6 +52,20 @@ public class TransferTargetGroup implements Serializable {
     @Configure
     private TransferTarget[] targets = new TransferTarget[0];
 
+    /**
+     * Whether every change an editor makes is published into this group by itself.
+     *
+     * <p>Off by default, because publishing without being asked is not what most groups are for: a production
+     * group is a group an editor transfers into deliberately, after looking at the result on test. A test
+     * group usually is the opposite - it should simply mirror the cms - and that is what this flag is for.
+     *
+     * <p>An auto transfer sends the one document that changed, not the documents it links to: every document
+     * is published as it is saved, so the graph catches up on its own, while a deep transfer on every save
+     * would re-publish half the cms and overwrite whatever the target edited in the meantime.
+     */
+    @Configure
+    private boolean autoTransfer = false;
+
     public String getName() {
         return name;
     }
@@ -65,6 +80,14 @@ public class TransferTargetGroup implements Serializable {
 
     public void setTargets(final TransferTarget[] aTargets) {
         this.targets = aTargets == null ? new TransferTarget[0] : aTargets;
+    }
+
+    public boolean isAutoTransfer() {
+        return autoTransfer;
+    }
+
+    public void setAutoTransfer(final boolean anAutoTransfer) {
+        this.autoTransfer = anAutoTransfer;
     }
 
     /**
@@ -85,6 +108,7 @@ public class TransferTargetGroup implements Serializable {
 
     @Override
     public String toString() {
-        return "TransferTargetGroup{name='" + name + "', targets=" + Arrays.toString(targets) + "}";
+        return "TransferTargetGroup{name='" + name + "', autoTransfer=" + autoTransfer
+                + ", targets=" + Arrays.toString(targets) + "}";
     }
 }

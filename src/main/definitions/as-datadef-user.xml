@@ -1,7 +1,7 @@
 <module name="ASUserData">
     <listener class="net.anotheria.anosite.cms.listener.CRUDLogListener"/>
     <listener class="net.anotheria.anosite.cms.listener.UserListener"/>
-	<listener class="net.anotheria.anosite.cms.listener.AutoTransferUserDataListener" />
+	<listener class="net.anotheria.anosite.cms.listener.AutoTransferListener" />
 	<document name="UserDef">
 		<property name="login" type="string"/>
 		<property name="status" type="list">

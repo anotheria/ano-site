@@ -1,6 +1,7 @@
 package net.anotheria.anosite.transfer;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Everything the transfer engine needs to know about one module's documents.
@@ -38,4 +39,41 @@ public interface ModuleTransferSupport {
      * @throws Exception                if the document cannot be loaded
      */
     DocumentSnapshot load(String documentName, String id) throws Exception;
+
+    /**
+     * Path of a document's rest collection relative to a target's api base, without leading or trailing
+     * slash.
+     *
+     * <p>This is the one place the path is defined: the generated supports call it instead of carrying a
+     * baked in literal, and it is also what tells a deletion where to go when the document itself is already
+     * gone. It mirrors the {@code @Path} the generated rest resource is annotated with.
+     *
+     * @param documentName name of the document type, one of {@link #getDocumentNames()}
+     * @return e.g. {@code asresourcedata/localizationbundle}
+     */
+    default String getRestPath(String documentName) {
+        return getModuleName().toLowerCase() + "/" + documentName.toLowerCase();
+    }
+
+    /**
+     * Remembers on documents of this module that they were transferred to another instance.
+     *
+     * <p>Called by the engine after a transfer reached every target of a group. Implementations write the
+     * timestamp and nothing else — not the last update timestamp, not the author, and without firing an update
+     * event, which would start the next transfer.
+     *
+     * <p>It takes every document of one transfer at once because writing them means writing the module, and a
+     * deep transfer of a few hundred documents is not worth a few hundred module writes.
+     *
+     * <p>Default is to remember nothing, which is what a hand written support that does not care about the
+     * timestamp wants, and what generated supports from before 5.0.8 do until the project is regenerated: the
+     * cms then shows those documents as never transferred instead of failing.
+     *
+     * @param idsByDocumentName ids of the transferred documents, by document type
+     * @param timestamp         timestamp of the transfer
+     * @throws Exception if the timestamps cannot be written
+     */
+    default void markTransferred(Map<String, List<String>> idsByDocumentName, long timestamp) throws Exception {
+        //a support that doesn't keep the timestamp simply has nothing to do here.
+    }
 }

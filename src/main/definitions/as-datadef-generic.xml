@@ -1,6 +1,6 @@
   <module name="ASGenericData">
     <listener class="net.anotheria.anosite.cms.listener.CRUDLogListener"/>
-	  <listener class="net.anotheria.anosite.cms.listener.AutoTransferAsGenericActionListener" />
+	  <listener class="net.anotheria.anosite.cms.listener.AutoTransferListener" />
 	<document name="GenericBoxType">
 		<property name="name" type="string"/>
 		<property name="rendererpage" type="string"/>

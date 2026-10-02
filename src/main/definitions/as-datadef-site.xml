@@ -1,6 +1,6 @@
   <module name="ASSiteData">
     <listener class="net.anotheria.anosite.cms.listener.CRUDLogListener"/>
-	  <listener class="net.anotheria.anosite.cms.listener.AutoTransferSiteDataListener" />
+	  <listener class="net.anotheria.anosite.cms.listener.AutoTransferListener" />
 	<document name="PageTemplate">
 		<property type="string" name="name"/>
 		<link name="layout" type="single" target="ASLayoutData.PageLayout"/>

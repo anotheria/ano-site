@@ -1,6 +1,6 @@
 <module name="ASBrand">
     <listener class="net.anotheria.anosite.cms.listener.CRUDLogListener"/>
-    <listener class="net.anotheria.anosite.cms.listener.AutoTransferBrandListener"/>
+    <listener class="net.anotheria.anosite.cms.listener.AutoTransferListener"/>
     <document name="Brand">
         <property type="string" name="name"/>
         <property type="boolean" name="defaultBrand"/>

@@ -1,6 +1,6 @@
   <module name="ASSiteConfig">
     <listener class="net.anotheria.anosite.cms.listener.CRUDLogListener"/>
-	  <listener class="net.anotheria.anosite.cms.listener.AutoTransferSiteConfigListener" />
+	  <listener class="net.anotheria.anosite.cms.listener.AutoTransferListener" />
 	<document name="FilteredIP">
 		<property name="ipAddress" type="string"/>
 		<property name="mask" type="int"/>

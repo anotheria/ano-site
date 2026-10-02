@@ -4,7 +4,7 @@
 	</options>
   
     <listener class="net.anotheria.anosite.cms.listener.CRUDLogListener"/>
-	<listener class="net.anotheria.anosite.cms.listener.AsResourceListener"/>
+	<listener class="net.anotheria.anosite.cms.listener.AutoTransferListener"/>
 	<document name="TextResource">
 		<property type="string" name="name"/>
 		<property type="string" name="value" multilingual="true"/>

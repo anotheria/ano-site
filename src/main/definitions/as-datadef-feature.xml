@@ -1,6 +1,6 @@
   <module name="ASFeature">
     <listener class="net.anotheria.anosite.cms.listener.CRUDLogListener"/>
-      <listener class="net.anotheria.anosite.cms.listener.AutoTransferFeatureListener" />
+      <listener class="net.anotheria.anosite.cms.listener.AutoTransferListener" />
 	<document name="Feature">
 		<property type="string" name="name"/>
 		<property type="boolean" name="enabled" />
