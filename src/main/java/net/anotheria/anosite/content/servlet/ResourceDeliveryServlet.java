@@ -74,27 +74,30 @@ public class ResourceDeliveryServlet extends MoskitoHttpServlet {
 		}
 
 		ContentType type = null;
-		if (path.toLowerCase().endsWith(".css")) // CSS resource
+        String lowerPath = path.toLowerCase(Locale.ROOT);
+		if (lowerPath.endsWith(".css")) // CSS resource
 			type = ContentType.CSS;
-		if (path.toLowerCase().endsWith(".js"))
+		if (lowerPath.endsWith(".js"))
 			type = ContentType.JS; // JS resource
-		if (path.toLowerCase().endsWith(".jpg"))
+		if (lowerPath.endsWith(".jpg"))
 			type = ContentType.JPG; // image resource
-		if (path.toLowerCase().endsWith(".jpeg"))
+		if (lowerPath.endsWith(".jpeg"))
 			type = ContentType.JPEG; // image resource
-		if (path.toLowerCase().endsWith(".png"))
+		if (lowerPath.endsWith(".png"))
 			type = ContentType.PNG; // image resource
-		if (path.toLowerCase().endsWith(".gif"))
+		if (lowerPath.endsWith(".gif"))
 			type = ContentType.GIF; // image resource
-		if (path.toLowerCase().endsWith(".eot"))
+		if (lowerPath.endsWith(".eot"))
 			type = ContentType.EOT; // font resource
-		if (path.toLowerCase().endsWith(".ttf"))
+		if (lowerPath.endsWith(".ttf"))
 			type = ContentType.TRUE_TYPE; // font resource
-		if (path.toLowerCase().endsWith(".otf"))
+		if (lowerPath.endsWith(".otf"))
 			type = ContentType.OPEN_TYPE; // font resource
-		if (path.toLowerCase().endsWith(".woff"))
+		if (lowerPath.endsWith(".woff"))
 			type = ContentType.WOFF; // font resource
-		if (path.toLowerCase().endsWith(".svg"))
+        if (lowerPath.endsWith(".woff2"))
+            type = ContentType.WOFF2; // font resource
+		if (lowerPath.endsWith(".svg"))
 			type = ContentType.SVG; // font resource
 
 		if (type == null) { // content type must be taken from extension or this is HttpServletResponse.SC_BAD_REQUEST
@@ -226,7 +229,8 @@ public class ResourceDeliveryServlet extends MoskitoHttpServlet {
 		/**
 		 * WOFF font file.
 		 */
-		WOFF("font/x-woff"),
+		WOFF("font/woff"),
+        WOFF2("font/woff2"),
 
 		/**
 		 * SVG font file.
