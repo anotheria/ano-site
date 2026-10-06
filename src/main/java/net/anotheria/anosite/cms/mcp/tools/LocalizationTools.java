@@ -5,6 +5,7 @@ import net.anotheria.anodoc.util.context.ContextManager;
 import net.anotheria.anoprise.metafactory.MetaFactory;
 import net.anotheria.anosite.cms.mcp.McpTool;
 import net.anotheria.anosite.gen.asresourcedata.data.LocalizationBundle;
+import net.anotheria.anosite.gen.asresourcedata.data.LocalizationBundleFactory;
 import net.anotheria.anosite.gen.asresourcedata.service.IASResourceDataService;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -122,6 +123,27 @@ public final class LocalizationTools {
         return sb.toString();
     }
 
+    /** Copy an {@code entries} tool argument into a bundle map, returning the number of entries copied. */
+    private static int putAll(JSONObject entries, Map<String, String> target) throws JSONException {
+        @SuppressWarnings("unchecked")
+        Iterator<String> keys = entries.keys();
+        int count = 0;
+        while (keys.hasNext()) {
+            String key = keys.next();
+            target.put(key, entries.getString(key));
+            count++;
+        }
+        return count;
+    }
+
+    /** Schema for the {@code entries} argument shared by the create and set-keys tools. */
+    private static JSONObject entriesSchema(String description) throws JSONException {
+        return new JSONObject()
+                .put("type", "object")
+                .put("description", description)
+                .put("additionalProperties", new JSONObject().put("type", "string"));
+    }
+
     // -------------------------------------------------------------------------
 
     public static class ListBundles implements McpTool {
@@ -169,6 +191,85 @@ public final class LocalizationTools {
             String lang = normalizeLanguage(arguments.getString("language"));
             LocalizationBundle bundle = service().getLocalizationBundle(id);
             return withLanguage(lang, bundle::getMessages);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+
+    public static class CreateBundle implements McpTool {
+
+        @Override public String name() { return "localization_create_bundle"; }
+        @Override public String description() {
+            return "Create a new localization bundle and return its id. Optionally sets a parent bundle to " +
+                   "inherit keys from, and initial key=value entries for one language. " +
+                   "Refuses to create a second bundle under an existing name.";
+        }
+
+        @Override public JSONObject inputSchema() throws JSONException {
+            JSONObject props = new JSONObject();
+            props.put("name",         new JSONObject().put("type", "string")
+                    .put("description", "Bundle name, has to be free"));
+            props.put("parentBundle", new JSONObject().put("type", "string")
+                    .put("description", "Optional id of the bundle to inherit keys from"));
+            props.put("language",     new JSONObject().put("type", "string")
+                    .put("description", languageDescription() + ". Required together with entries."));
+            props.put("entries",      entriesSchema("Optional initial property key -> value pairs, set in the given language"));
+            return new JSONObject()
+                    .put("type", "object")
+                    .put("properties", props)
+                    .put("required", new org.codehaus.jettison.json.JSONArray().put("name"));
+        }
+
+        @Override public String execute(JSONObject arguments) throws Exception {
+            String name = arguments.getString("name").trim();
+            if (name.isEmpty())
+                throw new IllegalArgumentException("name must not be empty.");
+
+            JSONObject entries = arguments.optJSONObject("entries");
+            boolean hasEntries = entries != null && entries.length() > 0;
+            String language = arguments.has("language") ? normalizeLanguage(arguments.getString("language")) : null;
+            if (hasEntries && language == null)
+                throw new IllegalArgumentException("language is required when entries are given. " + languageDescription());
+
+            String parent = arguments.has("parentBundle") ? arguments.getString("parentBundle").trim() : "";
+
+            IASResourceDataService svc = service();
+
+            //One read serves both checks. Nothing in the cms enforces unique bundle names - bundles are linked
+            //and resolved by id - but a second bundle under a name that is already taken is both the mistake a
+            //caller makes most easily and the one it cannot undo from here, since there is no delete tool. So
+            //we refuse it and name the bundle that is already there instead.
+            boolean parentFound = parent.isEmpty();
+            for (LocalizationBundle existing : svc.getLocalizationBundles()) {
+                if (name.equalsIgnoreCase(existing.getName()))
+                    throw new IllegalArgumentException("A localization bundle named '" + existing.getName()
+                            + "' already exists (id " + existing.getId() + "). Use localization_set_key(s) to edit it.");
+                if (!parent.isEmpty() && parent.equals(existing.getId()))
+                    parentFound = true;
+            }
+            if (!parentFound)
+                throw new IllegalArgumentException("No localization bundle with id '" + parent
+                        + "' to use as parent bundle.");
+
+            LocalizationBundle bundle = LocalizationBundleFactory.createLocalizationBundle();
+            bundle.setName(name);
+            if (!parent.isEmpty())
+                bundle.setParentBundle(parent);
+
+            int count = 0;
+            if (hasEntries)
+                count = withLanguage(language, () -> {
+                    Map<String, String> props = new LinkedHashMap<>();
+                    int c = putAll(entries, props);
+                    bundle.setMessages(serialize(props));
+                    return c;
+                });
+
+            //the id is assigned here, by the storage: the document the factory returns has none yet.
+            LocalizationBundle created = svc.createLocalizationBundle(bundle);
+            return "Created bundle " + created.getId() + " '" + name + "'"
+                    + (parent.isEmpty() ? "" : ", parent bundle " + parent)
+                    + (hasEntries ? " with " + count + " key(s) [" + language + "]" : " (empty)");
         }
     }
 
@@ -227,14 +328,10 @@ public final class LocalizationTools {
         }
 
         @Override public JSONObject inputSchema() throws JSONException {
-            JSONObject entriesSchema = new JSONObject()
-                    .put("type", "object")
-                    .put("description", "Map of property key → value pairs to set")
-                    .put("additionalProperties", new JSONObject().put("type", "string"));
             JSONObject props = new JSONObject();
             props.put("id",       new JSONObject().put("type", "string").put("description", "Bundle id"));
             props.put("language", new JSONObject().put("type", "string").put("description", languageDescription()));
-            props.put("entries",  entriesSchema);
+            props.put("entries",  entriesSchema("Map of property key -> value pairs to set"));
             return new JSONObject()
                     .put("type", "object")
                     .put("properties", props)
@@ -252,14 +349,7 @@ public final class LocalizationTools {
 
             int count = withLanguage(lang, () -> {
                 Map<String, String> props = parse(bundle.getMessages());
-                @SuppressWarnings("unchecked")
-                Iterator<String> keys = entries.keys();
-                int c = 0;
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    props.put(key, entries.getString(key));
-                    c++;
-                }
+                int c = putAll(entries, props);
                 bundle.setMessages(serialize(props));
                 return c;
             });
