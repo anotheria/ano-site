@@ -34,7 +34,7 @@
         <configureme.version>4.0.0</configureme.version>
         <moskito.version>4.0.9</moskito.version>
         <commons-io.version>2.15.0</commons-io.version>
-        <json.version>20231013</json.version>
+        <json.version>20260719</json.version>
         <!-- official MCP java sdk, used by the mcp server in net.anotheria.anosite.cms.mcp -->
         <mcp-sdk.version>2.0.1</mcp-sdk.version>
         <jackson.version>2.21.4</jackson.version>
