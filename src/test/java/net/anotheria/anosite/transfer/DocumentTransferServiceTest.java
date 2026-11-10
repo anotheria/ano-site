@@ -1,7 +1,7 @@
 package net.anotheria.anosite.transfer;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests how a transfer decides what to send.
@@ -28,7 +28,7 @@ public class DocumentTransferServiceTest {
     private TestSupport support;
     private DocumentTransferService service;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         support = new TestSupport(MODULE);
         TransferSupportRegistry.register(support);
@@ -127,7 +127,7 @@ public class DocumentTransferServiceTest {
 
         TransferPlan plan = service.plan(key("Image", "5"), TransferMode.SINGLE);
 
-        assertTrue("files are not a warning anymore", plan.warnings().isEmpty());
+        assertTrue(plan.warnings().isEmpty(), "files are not a warning anymore");
         assertEquals(List.of("logo.png"), plan.documents().get(0).referencedFiles());
     }
 
@@ -167,8 +167,7 @@ public class DocumentTransferServiceTest {
 
     @Test
     public void nothingIsAutoTransferredUntilAGroupAsksForIt() {
-        assertTrue("an instance without configuration publishes nowhere by itself",
-                service.getAutoTransferTargetGroups().isEmpty());
+        assertTrue(service.getAutoTransferTargetGroups().isEmpty(), "an instance without configuration publishes nowhere by itself");
     }
 
     @Test
@@ -243,8 +242,8 @@ public class DocumentTransferServiceTest {
 
         String described = DocumentTransferService.describeBody(huge);
 
-        assertTrue("the body should be trimmed", described.length() < huge.length());
-        assertTrue("and say that it was", described.endsWith("..."));
+        assertTrue(described.length() < huge.length(), "the body should be trimmed");
+        assertTrue(described.endsWith("..."), "and say that it was");
     }
 
     private DocumentKey key(String documentName, String id) {

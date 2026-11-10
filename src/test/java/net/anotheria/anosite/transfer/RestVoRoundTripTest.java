@@ -3,12 +3,12 @@ package net.anotheria.anosite.transfer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.anotheria.anosite.gen.anoaccessconfiguration.rest.RoleVO;
 import net.anotheria.anosite.gen.aswebdata.rest.PagexVO;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * A rest VO has to survive its own round trip.
@@ -48,9 +48,9 @@ public class RestVoRoundTripTest {
     public void theDataObjectStubsStayOutOfTheJson() throws Exception {
         String json = mapper.writeValueAsString(RoleVO.class.getDeclaredConstructor().newInstance());
 
-        assertFalse("definedName is not content: " + json, json.contains("definedName"));
-        assertFalse("definedParentName is not content: " + json, json.contains("definedParentName"));
-        assertFalse("objectInfo is not content: " + json, json.contains("objectInfo"));
+        assertFalse(json.contains("definedName"), "definedName is not content: " + json);
+        assertFalse(json.contains("definedParentName"), "definedParentName is not content: " + json);
+        assertFalse(json.contains("objectInfo"), "objectInfo is not content: " + json);
     }
 
     @Test

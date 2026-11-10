@@ -7,17 +7,17 @@ import net.anotheria.anodoc.util.context.ContextManager;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the bridge between the jettison based {@link McpTool} and the sdk's tool specifications.
@@ -29,7 +29,7 @@ public class McpToolAdapterTest {
      * be asked for its specifications once a call context factory is in place - which is what a real project's
      * context listener does before {@link McpBootstrap} runs.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpCallContext() {
         ContextManager.setFactory(TestCallContext::new);
     }
@@ -99,7 +99,7 @@ public class McpToolAdapterTest {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> properties = (Map<String, Object>) tool.inputSchema().get("properties");
-        assertTrue("nested schema objects have to survive as maps", properties.get("entries") instanceof Map);
+        assertTrue(properties.get("entries") instanceof Map, "nested schema objects have to survive as maps");
     }
 
     @Test
@@ -140,7 +140,7 @@ public class McpToolAdapterTest {
 
         McpSchema.CallToolResult result = call(failing, Map.of("id", "x"));
 
-        assertTrue("a failing tool is an answer to the caller, not a broken request", result.isError());
+        assertTrue(result.isError(), "a failing tool is an answer to the caller, not a broken request");
     }
 
     @Test
@@ -156,7 +156,7 @@ public class McpToolAdapterTest {
 
         assertTrue(result.isError());
         McpSchema.TextContent content = (McpSchema.TextContent) result.content().get(0);
-        assertTrue(content.text(), content.text().contains("storage is down"));
+        assertTrue(content.text().contains("storage is down"), content.text());
     }
 
     @Test
@@ -169,8 +169,8 @@ public class McpToolAdapterTest {
             McpSchema.Tool tool = specification.tool();
             assertNotEmpty("name", tool.name());
             assertNotEmpty("description of " + tool.name(), tool.description());
-            assertNotNull("schema of " + tool.name(), tool.inputSchema());
-            assertEquals("schema of " + tool.name(), "object", tool.inputSchema().get("type"));
+            assertNotNull(tool.inputSchema(), "schema of " + tool.name());
+            assertEquals("object", tool.inputSchema().get("type"), "schema of " + tool.name());
         }
     }
 
@@ -192,6 +192,6 @@ public class McpToolAdapterTest {
     }
 
     private static void assertNotEmpty(String what, String value) {
-        assertTrue("expected a non empty " + what, value != null && !value.isEmpty());
+        assertTrue(value != null && !value.isEmpty(), "expected a non empty " + what);
     }
 }

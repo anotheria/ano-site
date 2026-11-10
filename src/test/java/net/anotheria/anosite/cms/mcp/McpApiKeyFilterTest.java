@@ -8,10 +8,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.anotheria.anodoc.util.context.CallContext;
 import net.anotheria.anodoc.util.context.ContextManager;
 import org.codehaus.jettison.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that the MCP endpoint is only reachable with a configured api key, and that accepted requests carry the
@@ -39,7 +39,7 @@ public class McpApiKeyFilterTest {
     private StringWriter responseBody;
     private final Map<String, Object> responseState = new HashMap<>();
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpCallContext() {
         ContextManager.setFactory(TestCallContext::new);
     }
@@ -70,7 +70,7 @@ public class McpApiKeyFilterTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         config = McpServerConfig.getInstance();
         config.setEnabled(true);
@@ -89,7 +89,7 @@ public class McpApiKeyFilterTest {
         responseState.clear();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         //the config is a singleton, leave it the way an unconfigured project would see it
         config.setEnabled(false);
@@ -130,7 +130,7 @@ public class McpApiKeyFilterTest {
     public void requestsWithoutAnApiKeyAreRejected() throws Exception {
         filter.doFilter(request(null, null), response(), chain);
 
-        assertFalse("an unauthenticated request must not reach the tools", chain.invoked);
+        assertFalse(chain.invoked, "an unauthenticated request must not reach the tools");
         assertEquals(HttpServletResponse.SC_UNAUTHORIZED, status());
     }
 
@@ -161,7 +161,7 @@ public class McpApiKeyFilterTest {
     public void theApiKeyIsAcceptedAsARequestParameter() throws Exception {
         filter.doFilter(request(null, VALID_KEY), response(), chain);
 
-        assertTrue("clients that can't set headers fall back to the parameter", chain.invoked);
+        assertTrue(chain.invoked, "clients that can't set headers fall back to the parameter");
     }
 
     @Test
@@ -181,8 +181,7 @@ public class McpApiKeyFilterTest {
         filter.doFilter(request(VALID_KEY, null), response(), chain);
 
         assertEquals("houseid-mcp", chain.authorDuringCall);
-        assertNull("the author must not leak to the next request on this thread",
-                ContextManager.getCallContext().getCurrentAuthor());
+        assertNull(ContextManager.getCallContext().getCurrentAuthor(), "the author must not leak to the next request on this thread");
     }
 
     @Test

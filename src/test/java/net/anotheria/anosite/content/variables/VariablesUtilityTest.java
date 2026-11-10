@@ -4,14 +4,14 @@ import static net.anotheria.anosite.content.variables.VariablesUtility.replaceVa
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import junit.framework.Assert;
+import org.junit.jupiter.api.Assertions;
 import net.anotheria.anoprise.metafactory.Extension;
 import net.anotheria.anoprise.metafactory.MetaFactory;
 import net.anotheria.anosite.gen.asresourcedata.service.IASResourceDataService;
 import net.anotheria.anosite.gen.asresourcedata.service.fixture.ASResourceDataServiceFixtureFactory;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Junit for varUtilities.
@@ -20,7 +20,7 @@ import org.junit.Test;
  */
 public class VariablesUtilityTest {
 	
-	@BeforeClass public static void init(){
+	@BeforeAll public static void init(){
 		MetaFactory.addFactoryClass(IASResourceDataService.class, Extension.NONE, ASResourceDataServiceFixtureFactory.class);
 	}
 	
@@ -35,26 +35,26 @@ public class VariablesUtilityTest {
 		String staticText = "I'm static {::::>>>>>}}}}}";
 
 		String testReplaceVAR1 = replaceVariables(null, text);
-		Assert.assertNotNull("Should not be null", testReplaceVAR1);
-		Assert.assertEquals("Should not be null", "I'm text for replace! " + SimpleTestProcessor.var1Value, testReplaceVAR1);
+		Assertions.assertNotNull(testReplaceVAR1, "Should not be null");
+		Assertions.assertEquals("I'm text for replace! " + SimpleTestProcessor.var1Value, testReplaceVAR1, "Should not be null");
 
 		String testReplaceToDefault = replaceVariables(null, text2);
-		Assert.assertNotNull("Should not be null", testReplaceToDefault);
-		Assert.assertEquals("Should not be null", "TEST 2 " + "default___", testReplaceToDefault);
+		Assertions.assertNotNull(testReplaceToDefault, "Should not be null");
+		Assertions.assertEquals("TEST 2 " + "default___", testReplaceToDefault, "Should not be null");
 
 		String testReplaceStaticContent = replaceVariables(null, staticText);
-		Assert.assertNotNull("Should not be null", testReplaceStaticContent);
-		Assert.assertEquals("Should not be null", staticText, testReplaceStaticContent);
+		Assertions.assertNotNull(testReplaceStaticContent, "Should not be null");
+		Assertions.assertEquals(staticText, testReplaceStaticContent, "Should not be null");
 
 		String replaceEmpty = replaceVariables(null, "");
-		Assert.assertTrue("Should be empty", replaceEmpty.isEmpty());
+		Assertions.assertTrue(replaceEmpty.isEmpty(), "Should be empty");
 	}
 
 	@Test
 	public void processorOperations() {
 		VariablesUtility.addProcessor(SimpleTestProcessor.PREFIX, new SimpleTestProcessor());
-		Assert.assertNotNull(VariablesUtility.getDefaultProcessors().get(SimpleTestProcessor.PREFIX));
-		Assert.assertTrue(VariablesUtility.getDefaultProcessors().get(SimpleTestProcessor.PREFIX) instanceof SimpleTestProcessor);
+		Assertions.assertNotNull(VariablesUtility.getDefaultProcessors().get(SimpleTestProcessor.PREFIX));
+		Assertions.assertTrue(VariablesUtility.getDefaultProcessors().get(SimpleTestProcessor.PREFIX) instanceof SimpleTestProcessor);
 	}
 
 	/**

@@ -1,6 +1,6 @@
 package net.anotheria.anosite.content.variables;
 
-import junit.framework.Assert;
+import org.junit.jupiter.api.Assertions;
 import net.anotheria.anodoc.util.context.ContextManager;
 import net.anotheria.anoprise.metafactory.Extension;
 import net.anotheria.anoprise.metafactory.MetaFactory;
@@ -11,8 +11,8 @@ import net.anotheria.anosite.gen.asresourcedata.service.ASResourceDataServiceExc
 import net.anotheria.anosite.gen.asresourcedata.service.IASResourceDataService;
 import net.anotheria.anosite.gen.asresourcedata.service.fixture.ASResourceDataServiceFixtureFactory;
 import net.anotheria.anosite.gen.util.AnositeCallContext;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.DispatcherType;
@@ -56,7 +56,7 @@ public class TextResourceProcessorTestCase {
 	public static final String TEST_RESOURCE_VALUE = "testValue!!!";
 	private static HttpServletRequest req;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws MetaFactoryException, ASResourceDataServiceException {
 		MetaFactory.addFactoryClass(IASResourceDataService.class, Extension.CMS, ASResourceDataServiceFixtureFactory.class);
 		MetaFactory.addFactoryClass(IASResourceDataService.class, Extension.LOCAL, ASResourceDataServiceFixtureFactory.class);
@@ -79,19 +79,19 @@ public class TextResourceProcessorTestCase {
 
 		String defaultVal = "default";
 		String result = testProcessor.replace("", "", defaultVal, req);
-		Assert.assertNotNull("Should not be null", result);
+		Assertions.assertNotNull(result, "Should not be null");
 
 		result = testProcessor.replace(TextResourceProcessor.PREFIX, "", defaultVal, req);
-		Assert.assertNotNull("Should not be null", result);
+		Assertions.assertNotNull(result, "Should not be null");
 
 		result = testProcessor.replace(TextResourceProcessor.PREFIX, "123", defaultVal, req);
-		Assert.assertNotNull("Should not be null", result);
+		Assertions.assertNotNull(result, "Should not be null");
 
 		result = testProcessor.replace(TextResourceProcessor.PREFIX, "not Exist!", defaultVal, req);
-		Assert.assertNotNull("Should not be null", result);
+		Assertions.assertNotNull(result, "Should not be null");
 
 		result = testProcessor.replace(TextResourceProcessor.PREFIX, TEST_RESOURCE_NAME, defaultVal, req);
-		Assert.assertEquals("Should be equals to default", TEST_RESOURCE_VALUE, result);
+		Assertions.assertEquals(TEST_RESOURCE_VALUE, result, "Should be equals to default");
 	}
 
 	private static class TestHttpServletRequest implements HttpServletRequest{

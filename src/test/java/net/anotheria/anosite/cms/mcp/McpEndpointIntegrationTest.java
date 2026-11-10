@@ -13,10 +13,10 @@ import net.anotheria.anodoc.util.context.ContextManager;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.PrintWriter;
@@ -28,9 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Drives the real sdk transport servlet with real json-rpc requests, so the wiring the cms actually deploys -
@@ -42,7 +42,7 @@ public class McpEndpointIntegrationTest {
     private McpStatelessSyncServer server;
     private RecordingTool tool;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpCallContext() {
         ContextManager.setFactory(TestCallContext::new);
     }
@@ -96,7 +96,7 @@ public class McpEndpointIntegrationTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         tool = new RecordingTool();
         transport = HttpServletStatelessServerTransport.builder()
@@ -113,7 +113,7 @@ public class McpEndpointIntegrationTest {
                 .build();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (server != null)
             server.closeGracefully();
@@ -240,8 +240,8 @@ public class McpEndpointIntegrationTest {
                   "clientInfo":{"name":"old-client","version":"1.0.0"}}}""");
 
         String negotiated = response.getJSONObject("result").getString("protocolVersion");
-        assertFalse("the retired sse protocol version must not be offered", "2024-11-05".equals(negotiated));
-        assertTrue(negotiated, negotiated.startsWith("2025-"));
+        assertFalse("2024-11-05".equals(negotiated), "the retired sse protocol version must not be offered");
+        assertTrue(negotiated.startsWith("2025-"), negotiated);
     }
 
     @Test
@@ -294,7 +294,7 @@ public class McpEndpointIntegrationTest {
         JSONObject response = post("{\"jsonrpc\":\"2.0\",\"id\":6,\"method\":\"does/notExist\"}");
 
         //the old hand written endpoint answered this with a result containing an "error" key
-        assertFalse("an unknown method must not come back as a success", response.has("result"));
+        assertFalse(response.has("result"), "an unknown method must not come back as a success");
         assertEquals(-32601, response.getJSONObject("error").getInt("code"));
     }
 

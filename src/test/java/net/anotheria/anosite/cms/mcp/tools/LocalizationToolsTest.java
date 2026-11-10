@@ -4,14 +4,14 @@ import net.anotheria.anodoc.util.context.CallContext;
 import net.anotheria.anodoc.util.context.ContextManager;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests {@link LocalizationTools.CreateBundle}'s schema and the argument checks it makes before it touches the
@@ -24,7 +24,7 @@ public class LocalizationToolsTest {
      * The localization tools read the project's languages off the thread local call context, so a factory has
      * to be in place - which is what a real project's context listener does at startup.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpCallContext() {
         ContextManager.setFactory(TestCallContext::new);
     }
@@ -57,8 +57,8 @@ public class LocalizationToolsTest {
 
         //the language description has to name the running project's languages, not a hardcoded EN/DE
         String languageDescription = properties.getJSONObject("language").getString("description");
-        assertTrue(languageDescription, languageDescription.contains("EN"));
-        assertTrue(languageDescription, languageDescription.contains("DE"));
+        assertTrue(languageDescription.contains("EN"), languageDescription);
+        assertTrue(languageDescription.contains("DE"), languageDescription);
 
         //entries is a free form key -> value map of strings
         JSONObject entries = properties.getJSONObject("entries");
@@ -97,7 +97,7 @@ public class LocalizationToolsTest {
             new LocalizationTools.CreateBundle().execute(arguments);
             fail("Expected " + arguments + " to be rejected");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage(), e.getMessage().contains(expectedMessagePart));
+            assertTrue(e.getMessage().contains(expectedMessagePart), e.getMessage());
         }
     }
 }

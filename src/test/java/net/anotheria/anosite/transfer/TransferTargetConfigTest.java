@@ -3,11 +3,11 @@ package net.anotheria.anosite.transfer;
 import org.configureme.ConfigurationManager;
 import org.configureme.annotations.Configure;
 import org.configureme.annotations.ConfigureMe;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Proves that the transfer target configuration documented in {@code HowToTransferDocumentsInAnosite.md} is
@@ -28,14 +28,14 @@ public class TransferTargetConfigTest {
         Holder holder = new Holder();
         ConfigurationManager.INSTANCE.configure(holder);
 
-        assertTrue("transferEnabled should have been read", holder.transferEnabled);
-        assertEquals("both groups should have been read", 2, holder.transferTargetGroups.length);
+        assertTrue(holder.transferEnabled, "transferEnabled should have been read");
+        assertEquals(2, holder.transferTargetGroups.length, "both groups should have been read");
 
         TransferTargetGroup test = holder.transferTargetGroups[0];
         assertEquals("test", test.getName());
-        assertTrue("a parsed group has to be usable", test.isValid());
-        assertTrue("the auto transfer flag of the group should have been read", test.isAutoTransfer());
-        assertEquals("both targets of the group should have been read", 2, test.getTargets().length);
+        assertTrue(test.isValid(), "a parsed group has to be usable");
+        assertTrue(test.isAutoTransfer(), "the auto transfer flag of the group should have been read");
+        assertEquals(2, test.getTargets().length, "both targets of the group should have been read");
         assertEquals("test1", test.getTargets()[0].getName());
         assertEquals("https://test1.example.com/api", test.getTargets()[0].getUrl());
 
@@ -46,10 +46,9 @@ public class TransferTargetConfigTest {
         assertEquals("prod", prod.getName());
         //a group that says nothing about it does not publish by itself - production is transferred into
         //deliberately, after somebody looked at the result on test.
-        assertFalse("auto transfer has to stay off unless a group asks for it", prod.isAutoTransfer());
+        assertFalse(prod.isAutoTransfer(), "auto transfer has to stay off unless a group asks for it");
         assertEquals(1, prod.getTargets().length);
-        assertEquals("the trailing slash should be trimmed off",
-                "https://www.example.com/api", prod.getTargets()[0].getNormalizedUrl());
+        assertEquals("https://www.example.com/api", prod.getTargets()[0].getNormalizedUrl(), "the trailing slash should be trimmed off");
     }
 
     /**

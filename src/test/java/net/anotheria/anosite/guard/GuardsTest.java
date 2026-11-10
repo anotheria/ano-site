@@ -1,6 +1,6 @@
 package net.anotheria.anosite.guard;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -9,11 +9,11 @@ import net.anotheria.anodoc.util.context.CallContext;
 import net.anotheria.anodoc.util.context.CallContextFactory;
 import net.anotheria.anodoc.util.context.ContextManager;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class GuardsTest {
-	@BeforeClass public static void init(){
+	@BeforeAll public static void init(){
 		ContextManager.setFactory(new TestCallContextFactory());
 	}
 	
